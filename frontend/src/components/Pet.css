@@ -1,0 +1,214 @@
+/* Pet Component Styles */
+.pet-container {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.pet-display {
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.pet-avatar {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.pet-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8rem;
+  height: 8rem;
+  background: radial-gradient(circle, #f093fb55 0%, #667eea22 80%, transparent 100%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  filter: blur(8px);
+  animation: glowPulse 3s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.pet-emoji {
+  position: relative;
+  font-size: 6rem;
+  z-index: 1;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,0.12));
+  animation: petBounce 3s ease-in-out infinite;
+}
+
+.pet-info {
+  margin-bottom: 1.5rem;
+}
+
+.pet-name {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--primary-700);
+  margin-bottom: 0.25rem;
+  letter-spacing: 0.01em;
+}
+
+.pet-stage {
+  font-size: 1.125rem;
+  color: var(--gray-600);
+  margin-bottom: 0.5rem;
+}
+
+.pet-level {
+  display: flex;
+  justify-content: center;
+}
+
+.level-badge {
+  display: inline-block;
+  background: linear-gradient(90deg, #667eea 0%, #f093fb 100%);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  border-radius: 1rem;
+  padding: 0.25rem 1rem;
+  box-shadow: 0 2px 8px rgba(102,126,234,0.12);
+  letter-spacing: 0.05em;
+}
+
+/* --- Growth Stages Timeline --- */
+.growth-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.stages-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2.5rem; /* Increased gap since arrows are removed */
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.stage-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1rem 0.5rem 0.5rem 0.5rem;
+  border-radius: var(--border-radius-lg);
+  min-width: 80px;
+  min-height: 120px;
+  background: linear-gradient(135deg, #f9fafb 0%, #e0e7ff 100%);
+  border: 2px solid var(--gray-200);
+  position: relative;
+  transition: all 0.3s;
+}
+
+.stage-item.current {
+  background: linear-gradient(135deg, #f093fb33 0%, #667eea22 100%);
+  border: 2px solid #667eea;
+  box-shadow: 0 4px 16px #667eea22;
+  transform: scale(1.08);
+  z-index: 2;
+}
+
+.stage-item.completed {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+  border: 2px solid #22c55e;
+  opacity: 0.9;
+}
+
+.stage-item.locked {
+  opacity: 0.5;
+  background: var(--gray-100);
+  border: 2px solid var(--gray-200);
+}
+
+.stage-icon-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.current-indicator {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pulse-ring {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: rgba(102,126,234,0.15);
+  position: absolute;
+  animation: pulseRing 1.5s infinite;
+}
+.pulse-dot {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: #667eea;
+  position: relative;
+  z-index: 1;
+}
+@keyframes pulseRing {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  70% { transform: scale(1.2); opacity: 0.2; }
+  100% { transform: scale(0.8); opacity: 0.7; }
+}
+.completed-check {
+  position: absolute;
+  top: -0.5rem;
+  right: -0.5rem;
+  background: #22c55e;
+  color: #fff;
+  font-size: 1rem;
+  border-radius: 50%;
+  width: 1.25rem;
+  height: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px #22c55e33;
+}
+
+.stage-emoji {
+  font-size: 2rem;
+  margin-bottom: 0.25rem;
+}
+
+.stage-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--primary-700);
+  margin-bottom: 0.1rem;
+  text-align: center;
+}
+
+.stage-description {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .pet-stats .stat-card { min-width: 220px; max-width: 320px; }
+  .stages-container { gap: 1rem; }
+}
+@media (max-width: 600px) {
+  .pet-avatar { margin-bottom: 1rem; }
+  .pet-emoji { font-size: 3.5rem; }
+  .pet-glow { width: 4.5rem; height: 4.5rem; }
+  .pet-stats .stat-card { min-width: 140px; max-width: 100%; padding: 1rem; }
+  .stage-item { min-width: 60px; min-height: 80px; padding: 0.5rem; }
+  .stage-emoji { font-size: 1.25rem; }
+}

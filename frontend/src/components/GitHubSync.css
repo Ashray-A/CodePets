@@ -1,0 +1,366 @@
+/* GitHubSync Component Styles */
+
+.github-sync {
+  background: var(--color-white);
+  border-radius: var(--border-radius-2xl);
+  box-shadow: var(--shadow-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.github-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.github-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-gray-800);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.auto-sync-status {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.auto-sync-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.auto-sync-text {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+}
+
+.auto-sync-active {
+  color: var(--color-success-600);
+}
+
+.auto-sync-running {
+  color: var(--color-primary-600);
+}
+
+.last-sync-time {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+}
+
+.sync-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.sync-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius-lg);
+  font-weight: 500;
+  transition: var(--transition-colors);
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.sync-btn:disabled {
+  background: var(--color-gray-400) !important;
+  cursor: not-allowed;
+}
+
+.sync-btn--full {
+  background: var(--color-primary-500);
+  color: var(--color-white);
+}
+
+.sync-btn--full:hover:not(:disabled) {
+  background: var(--color-primary-600);
+}
+
+.sync-btn--quick {
+  background: var(--color-warning-500);
+  color: var(--color-white);
+}
+
+.sync-btn--quick:hover:not(:disabled) {
+  background: var(--color-warning-600);
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.sync-status {
+  padding: 1rem;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid;
+  animation: slideUp 0.3s ease-out;
+}
+
+.sync-status--success {
+  background: #f0f9f0;
+  border-color: #86d186;
+}
+
+.sync-status--error {
+  background: #fef2f2;
+  border-color: #f87171;
+}
+
+.sync-status--warning {
+  background: #fffbeb;
+  border-color: #fbbf24;
+}
+
+.sync-status-message {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.sync-status-message--success {
+  color: #166534;
+}
+
+.sync-status-message--error {
+  color: #dc2626;
+}
+
+.sync-status-message--warning {
+  color: #d97706;
+}
+
+.sync-status-details {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+  margin-bottom: 0.5rem;
+}
+
+.sync-log {
+  margin-top: 0.75rem;
+}
+
+.sync-log-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
+  margin-bottom: 0.5rem;
+}
+
+.sync-log-entries {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.sync-log-entry {
+  font-size: 0.75rem;
+  background: var(--color-white);
+  padding: 0.5rem;
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-gray-200);
+  color: var(--color-gray-600);
+}
+
+.stats-card {
+  background: linear-gradient(135deg, #faf5ff 0%, #e0e7ff 100%);
+  border-radius: var(--border-radius-xl);
+  padding: 1rem;
+}
+
+.stats-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-gray-800);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stat-item {
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-primary-600);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--color-gray-600);
+  margin-top: 0.25rem;
+}
+
+.stat-date {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-primary-600);
+  line-height: 1;
+}
+
+.repos-card {
+  background: linear-gradient(135deg, #f0fdf4 0%, #d1fae5 100%);
+  border-radius: var(--border-radius-xl);
+  padding: 1rem;
+}
+
+.repos-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--color-gray-800);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.repos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.repo-item {
+  background: var(--color-white);
+  border-radius: var(--border-radius-lg);
+  padding: 0.75rem;
+}
+
+.repo-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.repo-name {
+  font-weight: 500;
+  color: var(--color-primary-600);
+  text-decoration: none;
+  transition: var(--transition-colors);
+}
+
+.repo-name:hover {
+  color: var(--color-primary-700);
+}
+
+.repo-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.repo-language {
+  font-size: 0.75rem;
+  background: #dbeafe;
+  color: var(--color-primary-700);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--border-radius);
+}
+
+.repo-stars {
+  font-size: 0.75rem;
+  color: var(--color-gray-600);
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+}
+
+.repo-updated {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .github-sync {
+    padding: 1rem;
+    gap: 1rem;
+  }
+  
+  .github-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .auto-sync-status {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  
+  .sync-actions {
+    flex-direction: column;
+  }
+  
+  .sync-btn {
+    width: 100%;
+  }
+  
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  
+  .repo-meta {
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .repo-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
