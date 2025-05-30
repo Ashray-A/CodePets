@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import api from "../services/api";
-import "./Streaks.css";
+import React, { useState, useEffect } from 'react';
+import api from '../services/api';
+import './Streaks.css';
 
 const Streaks = ({ refreshTrigger }) => {
   const [streaks, setStreaks] = useState(null);
@@ -15,12 +15,12 @@ const Streaks = ({ refreshTrigger }) => {
     try {
       setIsLoading(true);
       setError(null);
-
-      const response = await api.get("/activities/streaks");
+      
+      const response = await api.get('/activities/streaks');
       setStreaks(response.data);
     } catch (error) {
-      console.error("Error loading streaks:", error);
-      setError("Failed to load streaks data");
+      console.error('Error loading streaks:', error);
+      setError('Failed to load streaks data');
     } finally {
       setIsLoading(false);
     }
@@ -32,12 +32,11 @@ const Streaks = ({ refreshTrigger }) => {
     if (streak < 7) return "Building momentum! 🔥";
     if (streak < 30) return "You're on fire! 🔥🔥";
     return "Legendary coder! 👑";
-  };
-  const getStreakColor = (streak) => {
-    if (streak === 0) return "streak-number--inactive";
-    if (streak < 7) return "streak-number--building";
-    if (streak < 30) return "streak-number--hot";
-    return "streak-number--legendary";
+  };  const getStreakColor = (streak) => {
+    if (streak === 0) return 'streak-number--inactive';
+    if (streak < 7) return 'streak-number--building';
+    if (streak < 30) return 'streak-number--hot';
+    return 'streak-number--legendary';
   };
 
   const formatTime = (minutes) => {
@@ -45,8 +44,7 @@ const Streaks = ({ refreshTrigger }) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     return mins > 0 ? `${hours}h ${mins}m` : `${hours}h`;
-  };
-  if (isLoading) {
+  };  if (isLoading) {
     return (
       <div className="streaks-container">
         <h3 className="streaks-title">
@@ -68,27 +66,25 @@ const Streaks = ({ refreshTrigger }) => {
         </h3>
         <div className="error-state">
           <div className="error-message">⚠️ {error}</div>
-          <button onClick={loadStreaks} className="retry-btn">
+          <button 
+            onClick={loadStreaks} 
+            className="retry-btn"
+          >
             Try Again
           </button>
         </div>
       </div>
     );
-  }
-  return (
+  }  return (
     <div className="streaks-container">
       <h3 className="streaks-title">
         🔥 <span>Coding Streaks</span>
       </h3>
-
+      
       <div className="streaks-content">
         <div className="current-streak-card">
           <div className="streak-display">
-            <div
-              className={`streak-number ${getStreakColor(
-                streaks.currentStreak
-              )}`}
-            >
+            <div className={`streak-number ${getStreakColor(streaks.currentStreak)}`}>
               {streaks.currentStreak}
             </div>
             <div className="streak-label">Day Streak</div>
@@ -96,13 +92,11 @@ const Streaks = ({ refreshTrigger }) => {
               {getStreakMessage(streaks.currentStreak)}
             </div>
           </div>
-
-          <div style={{ textAlign: "center" }}>
+          
+          <div style={{ textAlign: 'center' }}>
             <div className="longest-streak-badge">
               <span className="longest-streak-label">Longest:</span>
-              <span className="longest-streak-value">
-                {streaks.longestStreak}
-              </span>
+              <span className="longest-streak-value">{streaks.longestStreak}</span>
               <span className="longest-streak-unit">days</span>
             </div>
           </div>
@@ -116,23 +110,15 @@ const Streaks = ({ refreshTrigger }) => {
             <div className="weekly-stat-item">
               <div className="weekly-stat-label">This Week</div>
               <div className="weekly-stat-content">
-                <div className="weekly-commits">
-                  {streaks.weeklyStats.thisWeek.commits} commits
-                </div>
-                <div className="weekly-time">
-                  {formatTime(streaks.weeklyStats.thisWeek.codingTime)}
-                </div>
+                <div className="weekly-commits">{streaks.weeklyStats.thisWeek.commits} commits</div>
+                <div className="weekly-time">{formatTime(streaks.weeklyStats.thisWeek.codingTime)}</div>
               </div>
             </div>
             <div className="weekly-stat-item">
               <div className="weekly-stat-label">Last Week</div>
               <div className="weekly-stat-content">
-                <div className="weekly-commits weekly-commits--last">
-                  {streaks.weeklyStats.lastWeek.commits} commits
-                </div>
-                <div className="weekly-time">
-                  {formatTime(streaks.weeklyStats.lastWeek.codingTime)}
-                </div>
+                <div className="weekly-commits weekly-commits--last">{streaks.weeklyStats.lastWeek.commits} commits</div>
+                <div className="weekly-time">{formatTime(streaks.weeklyStats.lastWeek.codingTime)}</div>
               </div>
             </div>
           </div>
@@ -150,9 +136,7 @@ const Streaks = ({ refreshTrigger }) => {
                 <div className="achievement-icon">{achievement.icon}</div>
                 <div className="achievement-content">
                   <div className="achievement-title">{achievement.title}</div>
-                  <div className="achievement-description">
-                    {achievement.description}
-                  </div>
+                  <div className="achievement-description">{achievement.description}</div>
                 </div>
               </div>
             ))}
@@ -169,31 +153,21 @@ const Streaks = ({ refreshTrigger }) => {
             const activity = streaks.dailyActivity[day];
             const hasActivity = activity.totalActivity > 0;
             const date = new Date(day);
-            const dayName = date.toLocaleDateString("en-US", {
-              weekday: "short",
-            });
-
+            const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+            
             return (
               <div key={day} className="daily-activity-item">
                 <div className="day-label">{dayName}</div>
-                <div
-                  className={`day-indicator ${
-                    hasActivity
-                      ? "day-indicator--active"
-                      : "day-indicator--inactive"
-                  }`}
-                >
-                  {hasActivity ? "✓" : "○"}
+                <div className={`day-indicator ${
+                  hasActivity 
+                    ? 'day-indicator--active' 
+                    : 'day-indicator--inactive'
+                }`}>
+                  {hasActivity ? '✓' : '○'}
                 </div>
                 <div className="day-stats">
-                  {activity.commits > 0 && (
-                    <div className="day-commits">{activity.commits}c</div>
-                  )}
-                  {activity.codingTime > 0 && (
-                    <div className="day-time">
-                      {Math.round(activity.codingTime / 60)}h
-                    </div>
-                  )}
+                  {activity.commits > 0 && <div className="day-commits">{activity.commits}c</div>}
+                  {activity.codingTime > 0 && <div className="day-time">{Math.round(activity.codingTime/60)}h</div>}
                 </div>
               </div>
             );

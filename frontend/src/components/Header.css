@@ -1,7 +1,6 @@
 /* Header Component Styles */
 .header {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
+  background: white;
   box-shadow: var(--shadow-lg);
   border-bottom: 1px solid var(--gray-200);
   position: fixed;
@@ -10,12 +9,6 @@
   right: 0;
   z-index: 1000;
   height: 4rem;
-  transition: all 0.3s ease;
-}
-
-.header:hover {
-  background: rgba(255, 255, 255, 0.98);
-  box-shadow: var(--shadow-xl);
 }
 
 .header-container {

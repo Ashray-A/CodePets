@@ -3,11 +3,9 @@
 ## Step 1: Create a GitHub OAuth Application
 
 1. Go to **GitHub Settings** → **Developer settings** → **OAuth Apps**
-
    - Direct link: https://github.com/settings/applications/new
 
 2. Fill in the application details:
-
    - **Application name**: `CodePets - Digital Pet for Coders`
    - **Homepage URL**: `http://localhost:3000` (for development)
    - **Application description**: `A digital pet that grows based on your coding habits and GitHub activity`
@@ -32,7 +30,6 @@ GITHUB_CLIENT_SECRET=your_actual_client_secret_here
 When deploying to production, you'll need to:
 
 1. Create a new GitHub OAuth App for production with:
-
    - **Homepage URL**: `https://your-app-domain.com`
    - **Authorization callback URL**: `https://your-app-domain.com/auth/callback`
 

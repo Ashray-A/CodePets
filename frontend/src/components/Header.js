@@ -1,12 +1,12 @@
-import React from "react";
-import { useAuth } from "../contexts/AuthContext";
-import "./Header.css";
+import React from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import './Header.css';
 
 function Header() {
   const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    if (window.confirm("Are you sure you want to logout?")) {
+    if (window.confirm('Are you sure you want to logout?')) {
       logout();
     }
   };
@@ -20,24 +20,16 @@ function Header() {
         </a>
 
         <nav className="header-nav">
-          <a href="/" className="nav-link active">
-            Dashboard
-          </a>
-          <a href="/history" className="nav-link">
-            Activity History
-          </a>
-          <a href="/achievements" className="nav-link">
-            Achievements
-          </a>
+          <a href="/" className="nav-link active">Dashboard</a>
+          <a href="/history" className="nav-link">Activity History</a>
+          <a href="/achievements" className="nav-link">Achievements</a>
         </nav>
 
         <div className="user-section">
           {user && (
             <div className="user-info">
-              <img
-                src={
-                  user.avatar_url || `https://github.com/${user.username}.png`
-                }
+              <img 
+                src={user.avatar_url || `https://github.com/${user.username}.png`} 
                 alt={user.username}
                 className="user-avatar"
               />
@@ -47,13 +39,15 @@ function Header() {
               </div>
             </div>
           )}
-
+          
           <button onClick={handleLogout} className="logout-btn">
             Logout
           </button>
         </div>
 
-        <button className="mobile-menu-btn">☰</button>
+        <button className="mobile-menu-btn">
+          ☰
+        </button>
       </div>
     </header>
   );
