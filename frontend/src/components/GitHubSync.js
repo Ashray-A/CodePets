@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import GitHubService from '../services/github';
-import './GitHubSync.css';
+import React, { useState, useEffect, useRef } from "react";
+import GitHubService from "../services/github";
+import "./GitHubSync.css";
 
 const GitHubSync = ({ onSyncComplete }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -12,7 +12,7 @@ const GitHubSync = ({ onSyncComplete }) => {
   const autoSyncIntervalRef = useRef(null);
   useEffect(() => {
     loadGitHubData();
-    
+
     // Start auto-sync every 30 minutes
     const interval = setInterval(async () => {
       if (!isLoading) {
@@ -20,36 +20,37 @@ const GitHubSync = ({ onSyncComplete }) => {
           setIsAutoSyncing(true);
           const result = await GitHubService.autoSyncCommits();
           setLastSyncTime(new Date());
-          
+
           if (result.newCommits > 0 && onSyncComplete) {
             onSyncComplete(result);
           }
         } catch (error) {
-          console.error('Auto-sync failed:', error);
+          console.error("Auto-sync failed:", error);
         } finally {
           setIsAutoSyncing(false);
         }
       }
     }, 30 * 60 * 1000); // 30 minutes
-    
+
     autoSyncIntervalRef.current = interval;
-    
+
     return () => {
       if (autoSyncIntervalRef.current) {
         clearInterval(autoSyncIntervalRef.current);
       }
     };
-  }, [isLoading, onSyncComplete]);  const loadGitHubData = async () => {
+  }, [isLoading, onSyncComplete]);
+  const loadGitHubData = async () => {
     try {
       const [statsData, reposData] = await Promise.all([
         GitHubService.getGitHubStats(),
-        GitHubService.getUserRepositories()
+        GitHubService.getUserRepositories(),
       ]);
-      
+
       setGithubStats(statsData);
       setRepositories(reposData.repositories || []);
     } catch (error) {
-      console.error('Error loading GitHub data:', error);
+      console.error("Error loading GitHub data:", error);
     }
   };
   const handleSyncCommits = async () => {
@@ -59,9 +60,9 @@ const GitHubSync = ({ onSyncComplete }) => {
     try {
       const result = await GitHubService.syncCommits();
       setSyncStatus({
-        type: 'success',
+        type: "success",
         message: result.message,
-        details: `Found ${result.newCommits} new commits worth ${result.totalExperience} XP!`
+        details: `Found ${result.newCommits} new commits worth ${result.totalExperience} XP!`,
       });
 
       if (onSyncComplete) {
@@ -69,9 +70,9 @@ const GitHubSync = ({ onSyncComplete }) => {
       }
     } catch (error) {
       setSyncStatus({
-        type: 'error',
-        message: 'Failed to sync commits',
-        details: error.response?.data?.message || error.message
+        type: "error",
+        message: "Failed to sync commits",
+        details: error.response?.data?.message || error.message,
       });
     } finally {
       setIsLoading(false);
@@ -84,19 +85,21 @@ const GitHubSync = ({ onSyncComplete }) => {
 
     try {
       const result = await GitHubService.syncCommitsRealtime(forceSync);
-      
-      if (result.newCommits === 0 && result.message.includes('Rate limited')) {
+
+      if (result.newCommits === 0 && result.message.includes("Rate limited")) {
         setSyncStatus({
-          type: 'warning',
-          message: 'Sync rate limited',
-          details: `Next sync available at ${new Date(result.nextSyncAvailable).toLocaleTimeString()}`
+          type: "warning",
+          message: "Sync rate limited",
+          details: `Next sync available at ${new Date(
+            result.nextSyncAvailable
+          ).toLocaleTimeString()}`,
         });
       } else {
         setSyncStatus({
-          type: 'success',
+          type: "success",
           message: result.message,
           details: `Found ${result.newCommits} new commits worth ${result.totalExperience} XP!`,
-          syncLog: result.syncLog
+          syncLog: result.syncLog,
         });
       }
 
@@ -105,10 +108,10 @@ const GitHubSync = ({ onSyncComplete }) => {
       }
     } catch (error) {
       setSyncStatus({
-        type: 'error',
-        message: 'Failed to sync commits',
+        type: "error",
+        message: "Failed to sync commits",
         details: error.response?.data?.message || error.message,
-        syncLog: error.response?.data?.syncLog
+        syncLog: error.response?.data?.syncLog,
       });
     } finally {
       setIsLoading(false);
@@ -116,12 +119,13 @@ const GitHubSync = ({ onSyncComplete }) => {
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
-  };  return (
+  };
+  return (
     <div className="github-sync">
       <div className="github-header">
         <h3 className="github-title">
@@ -129,11 +133,15 @@ const GitHubSync = ({ onSyncComplete }) => {
         </h3>
         <div className="auto-sync-status">
           <div className="auto-sync-indicator">
-            <span className={isAutoSyncing ? 'auto-sync-running' : 'auto-sync-active'}>
-              {isAutoSyncing ? '🔄' : '✅'}
+            <span
+              className={
+                isAutoSyncing ? "auto-sync-running" : "auto-sync-active"
+              }
+            >
+              {isAutoSyncing ? "🔄" : "✅"}
             </span>
             <span className="auto-sync-text">
-              Auto-sync: {isAutoSyncing ? 'Running...' : 'Active'}
+              Auto-sync: {isAutoSyncing ? "Running..." : "Active"}
             </span>
           </div>
           {lastSyncTime && (
@@ -145,7 +153,7 @@ const GitHubSync = ({ onSyncComplete }) => {
       </div>
 
       <div className="sync-actions">
-        <button 
+        <button
           onClick={handleSyncCommits}
           disabled={isLoading}
           className="sync-btn sync-btn--full"
@@ -161,7 +169,7 @@ const GitHubSync = ({ onSyncComplete }) => {
             </>
           )}
         </button>
-        <button 
+        <button
           onClick={() => handleRealtimeSync(false)}
           disabled={isLoading}
           className="sync-btn sync-btn--quick"
@@ -181,7 +189,9 @@ const GitHubSync = ({ onSyncComplete }) => {
 
       {syncStatus && (
         <div className={`sync-status sync-status--${syncStatus.type}`}>
-          <div className={`sync-status-message sync-status-message--${syncStatus.type}`}>
+          <div
+            className={`sync-status-message sync-status-message--${syncStatus.type}`}
+          >
             {syncStatus.message}
           </div>
           <div className="sync-status-details">{syncStatus.details}</div>
@@ -207,19 +217,27 @@ const GitHubSync = ({ onSyncComplete }) => {
           </h4>
           <div className="stats-grid">
             <div className="stat-item">
-              <div className="stat-value">{githubStats.githubProfile.publicRepos}</div>
+              <div className="stat-value">
+                {githubStats.githubProfile.publicRepos}
+              </div>
               <div className="stat-label">Public Repos</div>
             </div>
             <div className="stat-item">
-              <div className="stat-value">{githubStats.githubProfile.followers}</div>
+              <div className="stat-value">
+                {githubStats.githubProfile.followers}
+              </div>
               <div className="stat-label">Followers</div>
             </div>
             <div className="stat-item">
-              <div className="stat-value">{githubStats.githubProfile.following}</div>
+              <div className="stat-value">
+                {githubStats.githubProfile.following}
+              </div>
               <div className="stat-label">Following</div>
             </div>
             <div className="stat-item">
-              <div className="stat-date">{formatDate(githubStats.githubProfile.createdAt)}</div>
+              <div className="stat-date">
+                {formatDate(githubStats.githubProfile.createdAt)}
+              </div>
               <div className="stat-label">Joined GitHub</div>
             </div>
           </div>
@@ -232,13 +250,13 @@ const GitHubSync = ({ onSyncComplete }) => {
             📁 <span>Recent Repositories</span>
           </h4>
           <div className="repos-list">
-            {repositories.slice(0, 5).map(repo => (
+            {repositories.slice(0, 5).map((repo) => (
               <div key={repo.id} className="repo-item">
                 <div className="repo-header">
                   <div>
-                    <a 
-                      href={repo.url} 
-                      target="_blank" 
+                    <a
+                      href={repo.url}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="repo-name"
                     >
@@ -246,13 +264,9 @@ const GitHubSync = ({ onSyncComplete }) => {
                     </a>
                     <div className="repo-meta">
                       {repo.language && (
-                        <span className="repo-language">
-                          {repo.language}
-                        </span>
+                        <span className="repo-language">{repo.language}</span>
                       )}
-                      <span className="repo-stars">
-                        ⭐ {repo.stars}
-                      </span>
+                      <span className="repo-stars">⭐ {repo.stars}</span>
                       <span className="repo-updated">
                         Updated {formatDate(repo.updatedAt)}
                       </span>

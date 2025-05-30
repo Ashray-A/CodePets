@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import api from '../services/api';
-import './ActivityFeed.css';
+import React, { useState, useEffect } from "react";
+import api from "../services/api";
+import "./ActivityFeed.css";
 
 const ActivityFeed = ({ refreshTrigger }) => {
   const [activities, setActivities] = useState([]);
@@ -15,18 +15,18 @@ const ActivityFeed = ({ refreshTrigger }) => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      const response = await api.get('/activities', {
-        params: { 
+
+      const response = await api.get("/activities", {
+        params: {
           limit: 20,
-          page: 1
-        }
+          page: 1,
+        },
       });
-      
+
       setActivities(response.data.activities || []);
     } catch (error) {
-      console.error('Error loading activities:', error);
-      setError('Failed to load activity feed');
+      console.error("Error loading activities:", error);
+      setError("Failed to load activity feed");
     } finally {
       setIsLoading(false);
     }
@@ -34,22 +34,24 @@ const ActivityFeed = ({ refreshTrigger }) => {
 
   const getActivityIcon = (type) => {
     switch (type) {
-      case 'commit':
-        return '📝';
-      case 'coding_session':
-        return '💻';
-      case 'manual_log':
-        return '✍️';
+      case "commit":
+        return "📝";
+      case "coding_session":
+        return "💻";
+      case "manual_log":
+        return "✍️";
       default:
-        return '🎯';
+        return "🎯";
     }
   };
 
   const getActivityDescription = (activity) => {
-    switch (activity.type) {      case 'commit':        return (
+    switch (activity.type) {
+      case "commit":
+        return (
           <div className="activity-description">
             <div className="activity-main-text">
-              {activity.data.message || 'No message'}
+              {activity.data.message || "No message"}
             </div>
             <div className="activity-meta">
               <span className="activity-repo">{activity.data.repository}</span>
@@ -66,7 +68,8 @@ const ActivityFeed = ({ refreshTrigger }) => {
             </div>
           </div>
         );
-      case 'coding_session':        return (
+      case "coding_session":
+        return (
           <div className="activity-description">
             <div className="activity-main-text">
               Coded for {activity.data.duration} minutes
@@ -79,13 +82,15 @@ const ActivityFeed = ({ refreshTrigger }) => {
             </div>
           </div>
         );
-      case 'manual_log':        return (
+      case "manual_log":
+        return (
           <div className="activity-description">
             <div className="activity-main-text">
-              {activity.data.description || 'Manual activity log'}
+              {activity.data.description || "Manual activity log"}
             </div>
           </div>
-        );      default:
+        );
+      default:
         return <div className="activity-description">Unknown activity</div>;
     }
   };
@@ -94,18 +99,19 @@ const ActivityFeed = ({ refreshTrigger }) => {
     const now = new Date();
     const activityDate = new Date(date);
     const diffInMinutes = Math.floor((now - activityDate) / (1000 * 60));
-    
-    if (diffInMinutes < 1) return 'Just now';
+
+    if (diffInMinutes < 1) return "Just now";
     if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
-    
+
     const diffInHours = Math.floor(diffInMinutes / 60);
     if (diffInHours < 24) return `${diffInHours}h ago`;
-    
+
     const diffInDays = Math.floor(diffInHours / 24);
     if (diffInDays < 7) return `${diffInDays}d ago`;
-    
+
     return activityDate.toLocaleDateString();
-  };  if (isLoading) {
+  };
+  if (isLoading) {
     return (
       <div className="activity-feed">
         <h3 className="activity-title">
@@ -127,34 +133,35 @@ const ActivityFeed = ({ refreshTrigger }) => {
         </h3>
         <div className="error-state">
           <div className="error-message">⚠️ {error}</div>
-          <button 
-            onClick={loadActivities} 
-            className="retry-btn"
-          >
+          <button onClick={loadActivities} className="retry-btn">
             Try Again
           </button>
         </div>
       </div>
     );
-  }  return (
+  }
+  return (
     <div className="activity-feed">
       <div className="activity-header">
         <h3 className="activity-title">
           📊 <span>Recent Activity</span>
         </h3>
-        <button 
-          onClick={loadActivities} 
-          className="refresh-btn" 
+        <button
+          onClick={loadActivities}
+          className="refresh-btn"
           title="Refresh"
         >
           🔄
         </button>
       </div>
-      
+
       {activities.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">📊</div>
-          <p className="empty-message">No activities yet. Start coding or sync your GitHub to see activities here!</p>
+          <p className="empty-message">
+            No activities yet. Start coding or sync your GitHub to see
+            activities here!
+          </p>
         </div>
       ) : (
         <div className="activity-list">
@@ -166,9 +173,7 @@ const ActivityFeed = ({ refreshTrigger }) => {
               <div className="activity-content">
                 {getActivityDescription(activity)}
                 <div className="activity-footer">
-                  <span className="activity-xp">
-                    +{activity.experience} XP
-                  </span>
+                  <span className="activity-xp">+{activity.experience} XP</span>
                   <span className="activity-time">
                     {formatRelativeTime(activity.date)}
                   </span>

@@ -1,18 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import { activityAPI } from '../services/api';
-import './TimeLogger.css';
+import React, { useState, useEffect } from "react";
+import { activityAPI } from "../services/api";
+import { useNotifications } from "../contexts/NotificationContext";
+import "./TimeLogger.css";
 
 function TimeLogger({ onActivityLogged }) {
   const [isActive, setIsActive] = useState(false);
   const [time, setTime] = useState(0);
   const [startTime, setStartTime] = useState(null);
   const [sessionData, setSessionData] = useState({
-    language: '',
-    project: '',
-    description: ''
+    language: "",
+    project: "",
+    description: "",
   });
   const [isLogging, setIsLogging] = useState(false);
-  const [manualDuration, setManualDuration] = useState('');
+  const [manualDuration, setManualDuration] = useState("");
+
+  const { showSuccessToast, showErrorToast, showEvolutionToast } =
+    useNotifications();
 
   // Timer effect
   useEffect(() => {
@@ -31,11 +35,13 @@ function TimeLogger({ onActivityLogged }) {
     const hrs = Math.floor(seconds / 3600);
     const mins = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    
+
     if (hrs > 0) {
-      return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      return `${hrs}:${mins.toString().padStart(2, "0")}:${secs
+        .toString()
+        .padStart(2, "0")}`;
     }
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
   const startTimer = () => {
@@ -57,15 +63,14 @@ function TimeLogger({ onActivityLogged }) {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setSessionData(prev => ({
+    setSessionData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
-
   const logSession = async (duration) => {
     if (!duration || duration <= 0) {
-      alert('Please enter a valid duration');
+      showErrorToast("Please enter a valid duration");
       return;
     }
 
@@ -73,30 +78,42 @@ function TimeLogger({ onActivityLogged }) {
     try {
       const response = await activityAPI.logManualSession({
         duration: Math.floor(duration / 60), // Convert seconds to minutes
-        language: sessionData.language || 'Unknown',
-        project: sessionData.project || 'Personal Project',
-        description: sessionData.description || 'Coding session'
+        language: sessionData.language || "Unknown",
+        project: sessionData.project || "Personal Project",
+        description: sessionData.description || "Coding session",
       });
 
-      alert(`Session logged! You gained ${response.data.experienceGained} XP!`);
-      
+      // Show success notification
+      showSuccessToast(
+        `Session logged! You gained ${response.data.experienceGained} XP!`
+      );
+
+      // Check for evolution (this would typically come from the backend response)
+      // For now, we'll simulate evolution checking based on experience
+      if (response.data.petEvolved) {
+        showEvolutionToast({
+          oldStage: response.data.oldStage,
+          newStage: response.data.newStage,
+          description: `Your pet evolved from ${response.data.oldStage} to ${response.data.newStage}!`,
+        });
+      }
+
       // Reset form
       setSessionData({
-        language: '',
-        project: '',
-        description: ''
+        language: "",
+        project: "",
+        description: "",
       });
       resetTimer();
-      setManualDuration('');
-      
+      setManualDuration("");
+
       // Notify parent component
       if (onActivityLogged) {
         onActivityLogged(response.data);
       }
-
     } catch (error) {
-      console.error('Failed to log session:', error);
-      alert('Failed to log session. Please try again.');
+      console.error("Failed to log session:", error);
+      showErrorToast("Failed to log session. Please try again.");
     } finally {
       setIsLogging(false);
     }
@@ -109,41 +126,34 @@ function TimeLogger({ onActivityLogged }) {
   const logManualSession = () => {
     const duration = parseInt(manualDuration) * 60; // Convert minutes to seconds
     logSession(duration);
-  };  return (
+  };
+  return (
     <div className="time-logger">
       <div className="timer-section">
         <h3 className="section-title">
           ⏱️ <span>Timer</span>
         </h3>
         <div className="timer-display">
-          <div className="timer-time">
-            {formatTime(time)}
-          </div>
+          <div className="timer-time">{formatTime(time)}</div>
           <div className="timer-controls">
             {!isActive ? (
-              <button 
-                onClick={startTimer} 
+              <button
+                onClick={startTimer}
                 className="timer-btn timer-btn--start"
               >
                 ▶️ <span>Start Coding</span>
               </button>
             ) : (
-              <button 
-                onClick={stopTimer} 
-                className="timer-btn timer-btn--stop"
-              >
+              <button onClick={stopTimer} className="timer-btn timer-btn--stop">
                 ⏹️ <span>Stop</span>
               </button>
             )}
-            <button 
-              onClick={resetTimer} 
-              className="timer-btn timer-btn--reset"
-            >
+            <button onClick={resetTimer} className="timer-btn timer-btn--reset">
               🔄 <span>Reset</span>
             </button>
           </div>
         </div>
-        
+
         {time > 0 && !isActive && (
           <div className="session-log-card">
             <h4 className="session-log-title">📝 Log this session?</h4>
@@ -172,12 +182,12 @@ function TimeLogger({ onActivityLogged }) {
                 rows={3}
                 className="form-input form-textarea"
               />
-              <button 
-                onClick={logTimerSession} 
+              <button
+                onClick={logTimerSession}
                 disabled={isLogging}
                 className="session-log-btn"
               >
-                {isLogging ? 'Logging...' : `Log ${formatTime(time)} Session`}
+                {isLogging ? "Logging..." : `Log ${formatTime(time)} Session`}
               </button>
             </div>
           </div>
@@ -188,7 +198,9 @@ function TimeLogger({ onActivityLogged }) {
         <h3 className="section-title">
           ✍️ <span>Manual Entry</span>
         </h3>
-        <p className="manual-description">Already coded? Log your time manually</p>
+        <p className="manual-description">
+          Already coded? Log your time manually
+        </p>
         <div className="manual-form">
           <div className="duration-input-group">
             <input
@@ -226,12 +238,12 @@ function TimeLogger({ onActivityLogged }) {
             rows={3}
             className="form-input form-textarea"
           />
-          <button 
-            onClick={logManualSession} 
+          <button
+            onClick={logManualSession}
             disabled={isLogging || !manualDuration}
             className="manual-log-btn"
           >
-            {isLogging ? 'Logging...' : 'Log Manual Session'}
+            {isLogging ? "Logging..." : "Log Manual Session"}
           </button>
         </div>
       </div>

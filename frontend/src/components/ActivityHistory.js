@@ -1,25 +1,25 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { activityAPI } from '../services/api';
-import './ActivityHistory.css';
+import React, { useState, useEffect, useCallback } from "react";
+import { activityAPI } from "../services/api";
+import "./ActivityHistory.css";
 
 function ActivityHistory() {
   const [activities, setActivities] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [selectedPeriod, setSelectedPeriod] = useState('week');
+  const [selectedPeriod, setSelectedPeriod] = useState("week");
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
       const [activitiesResponse, statsResponse] = await Promise.all([
         activityAPI.getActivities({ limit: 10 }),
-        activityAPI.getStats(selectedPeriod)
+        activityAPI.getStats(selectedPeriod),
       ]);
-      
+
       setActivities(activitiesResponse.data.activities);
       setStats(statsResponse.data);
     } catch (error) {
-      console.error('Failed to fetch activity data:', error);
+      console.error("Failed to fetch activity data:", error);
     } finally {
       setLoading(false);
     }
@@ -31,34 +31,41 @@ function ActivityHistory() {
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return (
+      date.toLocaleDateString() +
+      " " +
+      date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    );
   };
 
   const getActivityIcon = (type) => {
     switch (type) {
-      case 'commit':
-        return '📝';
-      case 'coding_session':
-        return '⏱️';
-      case 'manual_log':
-        return '✏️';
+      case "commit":
+        return "📝";
+      case "coding_session":
+        return "⏱️";
+      case "manual_log":
+        return "✏️";
       default:
-        return '🔧';
+        return "🔧";
     }
   };
 
   const getActivityDescription = (activity) => {
     switch (activity.type) {
-      case 'commit':
+      case "commit":
         return `Committed to ${activity.data.repository}: "${activity.data.message}"`;
-      case 'coding_session':
-        return `Coded for ${activity.data.duration} minutes in ${activity.data.language}${activity.data.project ? ` on ${activity.data.project}` : ''}`;
-      case 'manual_log':
-        return activity.data.description || 'Manual coding session';
+      case "coding_session":
+        return `Coded for ${activity.data.duration} minutes in ${
+          activity.data.language
+        }${activity.data.project ? ` on ${activity.data.project}` : ""}`;
+      case "manual_log":
+        return activity.data.description || "Manual coding session";
       default:
-        return 'Unknown activity';
+        return "Unknown activity";
     }
-  };  if (loading) {
+  };
+  if (loading) {
     return (
       <div className="loading-container">
         <div className="loading-content">
@@ -73,26 +80,32 @@ function ActivityHistory() {
       <div className="activity-stats-card">
         <h3 className="activity-title">Your Progress</h3>
         <div className="period-buttons">
-          <button 
-            className={`period-btn ${selectedPeriod === 'week' ? 'active' : 'inactive'}`}
-            onClick={() => setSelectedPeriod('week')}
+          <button
+            className={`period-btn ${
+              selectedPeriod === "week" ? "active" : "inactive"
+            }`}
+            onClick={() => setSelectedPeriod("week")}
           >
             This Week
           </button>
-          <button 
-            className={`period-btn ${selectedPeriod === 'month' ? 'active' : 'inactive'}`}
-            onClick={() => setSelectedPeriod('month')}
+          <button
+            className={`period-btn ${
+              selectedPeriod === "month" ? "active" : "inactive"
+            }`}
+            onClick={() => setSelectedPeriod("month")}
           >
             This Month
           </button>
-          <button 
-            className={`period-btn ${selectedPeriod === 'year' ? 'active' : 'inactive'}`}
-            onClick={() => setSelectedPeriod('year')}
+          <button
+            className={`period-btn ${
+              selectedPeriod === "year" ? "active" : "inactive"
+            }`}
+            onClick={() => setSelectedPeriod("year")}
           >
             This Year
           </button>
         </div>
-        
+
         {stats && (
           <div className="stats-grid">
             <div className="stat-card commits">
@@ -100,11 +113,16 @@ function ActivityHistory() {
               <div className="stat-label commits">Commits</div>
             </div>
             <div className="stat-card time">
-              <div className="stat-number time">{Math.floor(stats.totalCodingTime / 60)}h {stats.totalCodingTime % 60}m</div>
+              <div className="stat-number time">
+                {Math.floor(stats.totalCodingTime / 60)}h{" "}
+                {stats.totalCodingTime % 60}m
+              </div>
               <div className="stat-label time">Coding Time</div>
             </div>
             <div className="stat-card experience">
-              <div className="stat-number experience">{stats.totalExperience}</div>
+              <div className="stat-number experience">
+                {stats.totalExperience}
+              </div>
               <div className="stat-label experience">XP Gained</div>
             </div>
             <div className="stat-card sessions">
@@ -113,23 +131,24 @@ function ActivityHistory() {
             </div>
           </div>
         )}
-        
-        {stats?.languageBreakdown && Object.keys(stats.languageBreakdown).length > 0 && (
-          <div className="languages-section">
-            <h4 className="languages-title">Languages Used</h4>
-            <div className="languages-list">
-              {Object.entries(stats.languageBreakdown)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 5)
-                .map(([language, count]) => (
-                  <div key={language} className="language-item">
-                    <span className="language-name">{language}</span>
-                    <span className="language-count">{count}</span>
-                  </div>
-                ))}
+
+        {stats?.languageBreakdown &&
+          Object.keys(stats.languageBreakdown).length > 0 && (
+            <div className="languages-section">
+              <h4 className="languages-title">Languages Used</h4>
+              <div className="languages-list">
+                {Object.entries(stats.languageBreakdown)
+                  .sort(([, a], [, b]) => b - a)
+                  .slice(0, 5)
+                  .map(([language, count]) => (
+                    <div key={language} className="language-item">
+                      <span className="language-name">{language}</span>
+                      <span className="language-count">{count}</span>
+                    </div>
+                  ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
 
       <div className="activity-recent-card">
@@ -137,7 +156,9 @@ function ActivityHistory() {
         {activities.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">🚀</div>
-            <p className="empty-message">No activities yet. Start coding to see your progress!</p>
+            <p className="empty-message">
+              No activities yet. Start coding to see your progress!
+            </p>
           </div>
         ) : (
           <div className="activities-list">
@@ -151,8 +172,12 @@ function ActivityHistory() {
                     {getActivityDescription(activity)}
                   </div>
                   <div className="activity-meta">
-                    <span className="activity-date">{formatDate(activity.date)}</span>
-                    <span className="activity-xp">+{activity.experience} XP</span>
+                    <span className="activity-date">
+                      {formatDate(activity.date)}
+                    </span>
+                    <span className="activity-xp">
+                      +{activity.experience} XP
+                    </span>
                   </div>
                 </div>
               </div>

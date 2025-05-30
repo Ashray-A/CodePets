@@ -1,0 +1,307 @@
+/* ActivityHistory.css */
+
+.activity-history-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.activity-stats-card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: var(--shadow-lg);
+  padding: 1.5rem;
+}
+
+.activity-recent-card {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: var(--shadow-lg);
+  padding: 1.5rem;
+}
+
+.activity-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin: 0 0 1.5rem 0;
+}
+
+.period-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.period-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-duration);
+}
+
+.period-btn.active {
+  background: var(--primary-600);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+.period-btn.inactive {
+  background: var(--gray-100);
+  color: var(--gray-600);
+}
+
+.period-btn.inactive:hover {
+  background: var(--gray-200);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.stat-card {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  text-align: center;
+}
+
+.stat-card.commits {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+}
+
+.stat-card.time {
+  background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+}
+
+.stat-card.experience {
+  background: linear-gradient(135deg, #f3e8ff 0%, #ddd6fe 100%);
+}
+
+.stat-card.sessions {
+  background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+}
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.stat-number.commits {
+  color: var(--primary-600);
+}
+
+.stat-number.time {
+  color: #059669;
+}
+
+.stat-number.experience {
+  color: #7c3aed;
+}
+
+.stat-number.sessions {
+  color: #ea580c;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0;
+  margin-top: 0.25rem;
+}
+
+.stat-label.commits {
+  color: var(--primary-600);
+}
+
+.stat-label.time {
+  color: #059669;
+}
+
+.stat-label.experience {
+  color: #7c3aed;
+}
+
+.stat-label.sessions {
+  color: #ea580c;
+}
+
+.languages-section {
+  margin-top: 1.5rem;
+}
+
+.languages-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin: 0 0 0.75rem 0;
+}
+
+.languages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.language-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  background: var(--gray-50);
+  border-radius: 0.5rem;
+}
+
+.language-name {
+  font-weight: 500;
+  color: var(--gray-700);
+}
+
+.language-count {
+  padding: 0.25rem 0.5rem;
+  background: var(--primary-100);
+  color: var(--primary-700);
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.activities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 24rem;
+  overflow-y: auto;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: var(--gray-50);
+  border-radius: 0.5rem;
+  transition: background-color var(--transition-duration);
+}
+
+.activity-item:hover {
+  background: var(--gray-100);
+}
+
+.activity-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.activity-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity-description {
+  color: var(--gray-800);
+  font-weight: 500;
+  margin: 0 0 0.25rem 0;
+}
+
+.activity-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.875rem;
+}
+
+.activity-date {
+  color: var(--gray-500);
+}
+
+.activity-xp {
+  padding: 0.25rem 0.5rem;
+  background: var(--success-100);
+  color: var(--success-700);
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+.loading-container {
+  background: white;
+  border-radius: 1rem;
+  box-shadow: var(--shadow-lg);
+  padding: 1.5rem;
+}
+
+.loading-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--gray-600);
+}
+
+.loading-spinner {
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 2px solid var(--gray-300);
+  border-top: 2px solid var(--primary-600);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+}
+
+.empty-icon {
+  font-size: 3.75rem;
+  margin-bottom: 1rem;
+}
+
+.empty-message {
+  color: var(--gray-500);
+  margin: 0;
+}
+
+/* Animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .activity-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .period-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .period-btn {
+    text-align: center;
+  }
+}

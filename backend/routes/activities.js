@@ -1,214 +1,223 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const axios = require('axios');
-const Activity = require('../models/Activity');
-const Pet = require('../models/Pet');
-const User = require('../models/User');
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const axios = require("axios");
+const Activity = require("../models/Activity");
+const Pet = require("../models/Pet");
+const User = require("../models/User");
 
 const router = express.Router();
 
 // Middleware to verify JWT token
 const authenticateToken = async (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(' ')[1];
-    
+    const token = req.headers.authorization?.split(" ")[1];
+
     if (!token) {
-      return res.status(401).json({ message: 'Access token required' });
+      return res.status(401).json({ message: "Access token required" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded.userId);
-    
+
     if (!user) {
-      return res.status(401).json({ message: 'Invalid token' });
+      return res.status(401).json({ message: "Invalid token" });
     }
 
     req.user = user;
     next();
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid token' });
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
 
 // Get user's activities
-router.get('/', authenticateToken, async (req, res) => {
+router.get("/", authenticateToken, async (req, res) => {
   try {
     const { page = 1, limit = 20, type } = req.query;
-    
+
     const filter = { userId: req.user._id };
     if (type) {
       filter.type = type;
     }
-    
+
     const activities = await Activity.find(filter)
       .sort({ date: -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit);
-    
+
     const total = await Activity.countDocuments(filter);
-    
+
     res.json({
-      activities: activities.map(a => ({
+      activities: activities.map((a) => ({
         id: a._id,
         type: a.type,
         data: a.data,
         experience: a.experience,
         date: a.date,
-        processed: a.processed
+        processed: a.processed,
       })),
       pagination: {
         page: parseInt(page),
         limit: parseInt(limit),
         total,
-        pages: Math.ceil(total / limit)
-      }
+        pages: Math.ceil(total / limit),
+      },
     });
   } catch (error) {
-    res.status(500).json({ message: 'Failed to get activities' });
+    res.status(500).json({ message: "Failed to get activities" });
   }
 });
 
 // Manually log coding time
-router.post('/manual-log', authenticateToken, async (req, res) => {
+router.post("/manual-log", authenticateToken, async (req, res) => {
   try {
     const { duration, language, project, description } = req.body;
-    
+
     if (!duration || duration <= 0) {
-      return res.status(400).json({ message: 'Duration must be a positive number' });
+      return res
+        .status(400)
+        .json({ message: "Duration must be a positive number" });
     }
-    
-    if (duration > 480) { // Max 8 hours per session
-      return res.status(400).json({ message: 'Duration cannot exceed 8 hours (480 minutes)' });
+
+    if (duration > 480) {
+      // Max 8 hours per session
+      return res
+        .status(400)
+        .json({ message: "Duration cannot exceed 8 hours (480 minutes)" });
     }
-    
+
     const activity = new Activity({
       userId: req.user._id,
-      type: 'coding_session',
+      type: "coding_session",
       data: {
         duration: parseInt(duration),
-        language: language || 'Unknown',
-        project: project || 'Personal Project',
-        description: description || 'Manual coding session'
-      }
+        language: language || "Unknown",
+        project: project || "Personal Project",
+        description: description || "Manual coding session",
+      },
     });
-    
+
     await activity.save();
-    
+
     // Add experience to pet
     const pet = await Pet.findOne({ userId: req.user._id });
     if (pet) {
       await pet.addExperience(activity.experience);
-      
+
       // Update pet stats
       pet.stats.totalCodingTime += activity.data.duration;
-      
+
       // Update language stats
-      const langIndex = pet.stats.languagesUsed.findIndex(l => l.name === activity.data.language);
+      const langIndex = pet.stats.languagesUsed.findIndex(
+        (l) => l.name === activity.data.language
+      );
       if (langIndex >= 0) {
         pet.stats.languagesUsed[langIndex].count += 1;
       } else {
         pet.stats.languagesUsed.push({
           name: activity.data.language,
-          count: 1
+          count: 1,
         });
       }
-      
+
       await pet.save();
     }
-    
+
     activity.processed = true;
     await activity.save();
-    
+
     res.json({
-      message: 'Coding session logged successfully!',
+      message: "Coding session logged successfully!",
       activity: {
         id: activity._id,
         type: activity.type,
         data: activity.data,
         experience: activity.experience,
-        date: activity.date
+        date: activity.date,
       },
-      experienceGained: activity.experience
+      experienceGained: activity.experience,
     });
   } catch (error) {
-    console.error('Manual log error:', error);
-    res.status(500).json({ message: 'Failed to log coding session' });  }
+    console.error("Manual log error:", error);
+    res.status(500).json({ message: "Failed to log coding session" });
+  }
 });
 
 // Get activity stats
-router.get('/stats', authenticateToken, async (req, res) => {
+router.get("/stats", authenticateToken, async (req, res) => {
   try {
-    const { period = 'week' } = req.query; // week, month, year
-    
+    const { period = "week" } = req.query; // week, month, year
+
     let startDate;
     const now = new Date();
-    
+
     switch (period) {
-      case 'week':
+      case "week":
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         break;
-      case 'month':
+      case "month":
         startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
         break;
-      case 'year':
+      case "year":
         startDate = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
         break;
       default:
         startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     }
-    
+
     const activities = await Activity.find({
       userId: req.user._id,
-      date: { $gte: startDate }
+      date: { $gte: startDate },
     });
-    
+
     const stats = {
       totalActivities: activities.length,
       totalExperience: activities.reduce((sum, a) => sum + a.experience, 0),
-      commits: activities.filter(a => a.type === 'commit').length,
-      codingSessions: activities.filter(a => a.type === 'coding_session').length,
+      commits: activities.filter((a) => a.type === "commit").length,
+      codingSessions: activities.filter((a) => a.type === "coding_session")
+        .length,
       totalCodingTime: activities
-        .filter(a => a.type === 'coding_session')
+        .filter((a) => a.type === "coding_session")
         .reduce((sum, a) => sum + (a.data.duration || 0), 0),
       languageBreakdown: {},
-      dailyActivity: {}
+      dailyActivity: {},
     };
-    
+
     // Calculate language breakdown
-    activities.forEach(activity => {
+    activities.forEach((activity) => {
       if (activity.data.language) {
-        stats.languageBreakdown[activity.data.language] = 
+        stats.languageBreakdown[activity.data.language] =
           (stats.languageBreakdown[activity.data.language] || 0) + 1;
       }
     });
-    
+
     // Calculate daily activity
-    activities.forEach(activity => {
-      const day = activity.date.toISOString().split('T')[0];
+    activities.forEach((activity) => {
+      const day = activity.date.toISOString().split("T")[0];
       if (!stats.dailyActivity[day]) {
         stats.dailyActivity[day] = { commits: 0, codingTime: 0, experience: 0 };
       }
-      
-      if (activity.type === 'commit') {
+
+      if (activity.type === "commit") {
         stats.dailyActivity[day].commits++;
-      } else if (activity.type === 'coding_session') {
+      } else if (activity.type === "coding_session") {
         stats.dailyActivity[day].codingTime += activity.data.duration || 0;
       }
-      
+
       stats.dailyActivity[day].experience += activity.experience;
     });
-    
+
     res.json(stats);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to get activity stats' });
+    res.status(500).json({ message: "Failed to get activity stats" });
   }
 });
 
 // Enhanced GitHub commit syncing with multiple data sources
-router.post('/sync-github', authenticateToken, async (req, res) => {
+router.post("/sync-github", authenticateToken, async (req, res) => {
   try {
     if (!req.user.accessToken) {
-      return res.status(400).json({ message: 'GitHub access token not found' });
+      return res.status(400).json({ message: "GitHub access token not found" });
     }
 
     let totalNewCommits = 0;
@@ -216,31 +225,34 @@ router.post('/sync-github', authenticateToken, async (req, res) => {
     const syncResults = {
       fromEvents: 0,
       fromRepos: 0,
-      errors: []
+      errors: [],
     };
 
     // Method 1: Get commits from user events (faster, covers recent activity)
     try {
-      const eventsResponse = await axios.get('https://api.github.com/user/events', {
-        headers: {
-          'Authorization': `token ${req.user.accessToken}`,
-          'Accept': 'application/vnd.github.v3+json'
-        },
-        params: {
-          per_page: 100
+      const eventsResponse = await axios.get(
+        "https://api.github.com/user/events",
+        {
+          headers: {
+            Authorization: `token ${req.user.accessToken}`,
+            Accept: "application/vnd.github.v3+json",
+          },
+          params: {
+            per_page: 100,
+          },
         }
-      });
+      );
 
       const events = eventsResponse.data;
 
       for (const event of events) {
-        if (event.type === 'PushEvent' && event.payload.commits) {
+        if (event.type === "PushEvent" && event.payload.commits) {
           for (const commit of event.payload.commits) {
             // Check if we already have this commit
             const existingActivity = await Activity.findOne({
               userId: req.user._id,
-              type: 'commit',
-              'data.commitHash': commit.sha
+              type: "commit",
+              "data.commitHash": commit.sha,
             });
 
             if (!existingActivity) {
@@ -248,25 +260,28 @@ router.post('/sync-github', authenticateToken, async (req, res) => {
               let commitDetails = null;
               try {
                 const detailResponse = await axios.get(commit.url, {
-                  headers: { 'Authorization': `token ${req.user.accessToken}` }
+                  headers: { Authorization: `token ${req.user.accessToken}` },
                 });
                 commitDetails = detailResponse.data;
               } catch (detailError) {
-                console.warn(`Could not get commit details for ${commit.sha}:`, detailError.message);
+                console.warn(
+                  `Could not get commit details for ${commit.sha}:`,
+                  detailError.message
+                );
               }
 
               const activity = new Activity({
                 userId: req.user._id,
-                type: 'commit',
+                type: "commit",
                 data: {
                   commitHash: commit.sha,
                   message: commit.message,
                   repository: event.repo.name,
                   additions: commitDetails?.stats?.additions || 0,
                   deletions: commitDetails?.stats?.deletions || 0,
-                  language: 'Unknown' // Will be enhanced in method 2
+                  language: "Unknown", // Will be enhanced in method 2
                 },
-                date: new Date(event.created_at)
+                date: new Date(event.created_at),
               });
 
               await activity.save();
@@ -294,33 +309,41 @@ router.post('/sync-github', authenticateToken, async (req, res) => {
 
     // Method 2: Get commits from user's repositories (more detailed, covers older commits)
     try {
-      const reposResponse = await axios.get('https://api.github.com/user/repos', {
-        headers: { 'Authorization': `token ${req.user.accessToken}` },
-        params: { 
-          sort: 'updated',
-          per_page: 20 // Limit to avoid rate limits
+      const reposResponse = await axios.get(
+        "https://api.github.com/user/repos",
+        {
+          headers: { Authorization: `token ${req.user.accessToken}` },
+          params: {
+            sort: "updated",
+            per_page: 20, // Limit to avoid rate limits
+          },
         }
-      });
+      );
 
-      const lastSync = req.user.lastCommitDate || new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // Last 7 days
+      const lastSync =
+        req.user.lastCommitDate ||
+        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000); // Last 7 days
 
       for (const repo of reposResponse.data) {
         try {
-          const commitsResponse = await axios.get(`https://api.github.com/repos/${repo.full_name}/commits`, {
-            headers: { 'Authorization': `token ${req.user.accessToken}` },
-            params: {
-              author: req.user.username,
-              since: lastSync.toISOString(),
-              per_page: 50
+          const commitsResponse = await axios.get(
+            `https://api.github.com/repos/${repo.full_name}/commits`,
+            {
+              headers: { Authorization: `token ${req.user.accessToken}` },
+              params: {
+                author: req.user.username,
+                since: lastSync.toISOString(),
+                per_page: 50,
+              },
             }
-          });
+          );
 
           for (const commit of commitsResponse.data) {
             // Check if we already have this commit
             const existingActivity = await Activity.findOne({
               userId: req.user._id,
-              type: 'commit',
-              'data.commitHash': commit.sha
+              type: "commit",
+              "data.commitHash": commit.sha,
             });
 
             if (!existingActivity) {
@@ -328,25 +351,28 @@ router.post('/sync-github', authenticateToken, async (req, res) => {
               let commitDetails = null;
               try {
                 const detailResponse = await axios.get(commit.url, {
-                  headers: { 'Authorization': `token ${req.user.accessToken}` }
+                  headers: { Authorization: `token ${req.user.accessToken}` },
                 });
                 commitDetails = detailResponse.data;
               } catch (detailError) {
-                console.warn(`Could not get commit details for ${commit.sha}:`, detailError.message);
+                console.warn(
+                  `Could not get commit details for ${commit.sha}:`,
+                  detailError.message
+                );
               }
 
               const activity = new Activity({
                 userId: req.user._id,
-                type: 'commit',
+                type: "commit",
                 data: {
                   commitHash: commit.sha,
                   message: commit.commit.message,
                   repository: repo.full_name,
                   additions: commitDetails?.stats?.additions || 0,
                   deletions: commitDetails?.stats?.deletions || 0,
-                  language: repo.language || 'Unknown'
+                  language: repo.language || "Unknown",
                 },
-                date: new Date(commit.commit.author.date)
+                date: new Date(commit.commit.author.date),
               });
 
               await activity.save();
@@ -359,20 +385,22 @@ router.post('/sync-github', authenticateToken, async (req, res) => {
               if (pet) {
                 await pet.addExperience(activity.experience);
                 pet.stats.totalCommits += 1;
-                
+
                 // Update language stats
                 if (repo.language) {
-                  const langIndex = pet.stats.languagesUsed.findIndex(l => l.name === repo.language);
+                  const langIndex = pet.stats.languagesUsed.findIndex(
+                    (l) => l.name === repo.language
+                  );
                   if (langIndex >= 0) {
                     pet.stats.languagesUsed[langIndex].count += 1;
                   } else {
                     pet.stats.languagesUsed.push({
                       name: repo.language,
-                      count: 1
+                      count: 1,
                     });
                   }
                 }
-                
+
                 await pet.save();
               }
 
@@ -381,7 +409,9 @@ router.post('/sync-github', authenticateToken, async (req, res) => {
             }
           }
         } catch (repoError) {
-          syncResults.errors.push(`Repo ${repo.full_name} error: ${repoError.message}`);
+          syncResults.errors.push(
+            `Repo ${repo.full_name} error: ${repoError.message}`
+          );
         }
       }
     } catch (reposError) {
@@ -401,44 +431,46 @@ router.post('/sync-github', authenticateToken, async (req, res) => {
       details: {
         fromEvents: syncResults.fromEvents,
         fromRepos: syncResults.fromRepos,
-        errors: syncResults.errors
-      }
+        errors: syncResults.errors,
+      },
     });
-
   } catch (error) {
-    console.error('GitHub sync error:', error);
-    res.status(500).json({ 
-      message: 'Failed to sync GitHub commits',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    console.error("GitHub sync error:", error);
+    res.status(500).json({
+      message: "Failed to sync GitHub commits",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Internal server error",
     });
   }
 });
 
 // Get GitHub statistics
-router.get('/github-stats', authenticateToken, async (req, res) => {
+router.get("/github-stats", authenticateToken, async (req, res) => {
   try {
     if (!req.user.accessToken) {
-      return res.status(400).json({ message: 'GitHub access token not found' });
+      return res.status(400).json({ message: "GitHub access token not found" });
     }
 
     // Get user's GitHub profile stats
-    const userResponse = await axios.get('https://api.github.com/user', {
+    const userResponse = await axios.get("https://api.github.com/user", {
       headers: {
-        'Authorization': `token ${req.user.accessToken}`,
-        'Accept': 'application/vnd.github.v3+json'
-      }
+        Authorization: `token ${req.user.accessToken}`,
+        Accept: "application/vnd.github.v3+json",
+      },
     });
 
     // Get user's repositories
-    const reposResponse = await axios.get('https://api.github.com/user/repos', {
+    const reposResponse = await axios.get("https://api.github.com/user/repos", {
       headers: {
-        'Authorization': `token ${req.user.accessToken}`,
-        'Accept': 'application/vnd.github.v3+json'
+        Authorization: `token ${req.user.accessToken}`,
+        Accept: "application/vnd.github.v3+json",
       },
       params: {
-        sort: 'updated',
-        per_page: 10
-      }
+        sort: "updated",
+        per_page: 10,
+      },
     });
 
     const stats = {
@@ -446,48 +478,50 @@ router.get('/github-stats', authenticateToken, async (req, res) => {
         publicRepos: userResponse.data.public_repos,
         followers: userResponse.data.followers,
         following: userResponse.data.following,
-        createdAt: userResponse.data.created_at
+        createdAt: userResponse.data.created_at,
       },
-      recentRepositories: reposResponse.data.map(repo => ({
+      recentRepositories: reposResponse.data.map((repo) => ({
         name: repo.name,
         fullName: repo.full_name,
         language: repo.language,
         stars: repo.stargazers_count,
         updatedAt: repo.updated_at,
-        url: repo.html_url
-      }))
+        url: repo.html_url,
+      })),
     };
 
     res.json(stats);
-
   } catch (error) {
-    console.error('GitHub stats error:', error);
-    res.status(500).json({ 
-      message: 'Failed to get GitHub stats',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    console.error("GitHub stats error:", error);
+    res.status(500).json({
+      message: "Failed to get GitHub stats",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Internal server error",
     });
   }
 });
 
 // Get user's repositories
-router.get('/repositories', authenticateToken, async (req, res) => {
+router.get("/repositories", authenticateToken, async (req, res) => {
   try {
     if (!req.user.accessToken) {
-      return res.status(400).json({ message: 'GitHub access token not found' });
+      return res.status(400).json({ message: "GitHub access token not found" });
     }
 
-    const reposResponse = await axios.get('https://api.github.com/user/repos', {
+    const reposResponse = await axios.get("https://api.github.com/user/repos", {
       headers: {
-        'Authorization': `token ${req.user.accessToken}`,
-        'Accept': 'application/vnd.github.v3+json'
+        Authorization: `token ${req.user.accessToken}`,
+        Accept: "application/vnd.github.v3+json",
       },
       params: {
-        sort: 'updated',
-        per_page: 50
-      }
+        sort: "updated",
+        per_page: 50,
+      },
     });
 
-    const repositories = reposResponse.data.map(repo => ({
+    const repositories = reposResponse.data.map((repo) => ({
       id: repo.id,
       name: repo.name,
       fullName: repo.full_name,
@@ -497,34 +531,38 @@ router.get('/repositories', authenticateToken, async (req, res) => {
       updatedAt: repo.updated_at,
       createdAt: repo.created_at,
       url: repo.html_url,
-      private: repo.private
+      private: repo.private,
     }));
 
     res.json({ repositories });
-
   } catch (error) {
-    console.error('Repositories fetch error:', error);
-    res.status(500).json({ 
-      message: 'Failed to get repositories',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    console.error("Repositories fetch error:", error);
+    res.status(500).json({
+      message: "Failed to get repositories",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Internal server error",
     });
   }
 });
 
 // Automatic GitHub sync (can be called periodically)
-router.post('/auto-sync-github', authenticateToken, async (req, res) => {
+router.post("/auto-sync-github", authenticateToken, async (req, res) => {
   try {
     if (!req.user.accessToken) {
-      return res.status(400).json({ message: 'GitHub access token not found' });
+      return res.status(400).json({ message: "GitHub access token not found" });
     }
 
     // Only sync if last sync was more than 1 hour ago to avoid rate limits
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     if (req.user.lastCommitDate && req.user.lastCommitDate > oneHourAgo) {
       return res.json({
-        message: 'Sync skipped - too recent',
+        message: "Sync skipped - too recent",
         lastSync: req.user.lastCommitDate,
-        nextSyncAvailable: new Date(req.user.lastCommitDate.getTime() + 60 * 60 * 1000)
+        nextSyncAvailable: new Date(
+          req.user.lastCommitDate.getTime() + 60 * 60 * 1000
+        ),
       });
     }
 
@@ -533,40 +571,43 @@ router.post('/auto-sync-github', authenticateToken, async (req, res) => {
     let totalExperience = 0;
 
     // Only get recent events for auto-sync (faster)
-    const eventsResponse = await axios.get('https://api.github.com/user/events', {
-      headers: {
-        'Authorization': `token ${req.user.accessToken}`,
-        'Accept': 'application/vnd.github.v3+json'
-      },
-      params: {
-        per_page: 50 // Reduced for auto-sync
+    const eventsResponse = await axios.get(
+      "https://api.github.com/user/events",
+      {
+        headers: {
+          Authorization: `token ${req.user.accessToken}`,
+          Accept: "application/vnd.github.v3+json",
+        },
+        params: {
+          per_page: 50, // Reduced for auto-sync
+        },
       }
-    });
+    );
 
     const events = eventsResponse.data;
 
     for (const event of events) {
-      if (event.type === 'PushEvent' && event.payload.commits) {
+      if (event.type === "PushEvent" && event.payload.commits) {
         for (const commit of event.payload.commits) {
           const existingActivity = await Activity.findOne({
             userId: req.user._id,
-            type: 'commit',
-            'data.commitHash': commit.sha
+            type: "commit",
+            "data.commitHash": commit.sha,
           });
 
           if (!existingActivity) {
             const activity = new Activity({
               userId: req.user._id,
-              type: 'commit',
+              type: "commit",
               data: {
                 commitHash: commit.sha,
                 message: commit.message,
                 repository: event.repo.name,
                 additions: 0, // Skip detailed stats for auto-sync
                 deletions: 0,
-                language: 'Unknown'
+                language: "Unknown",
               },
-              date: new Date(event.created_at)
+              date: new Date(event.created_at),
             });
 
             await activity.save();
@@ -597,50 +638,52 @@ router.post('/auto-sync-github', authenticateToken, async (req, res) => {
       message: `Auto-synced ${totalNewCommits} new commits`,
       newCommits: totalNewCommits,
       totalExperience: totalExperience,
-      syncType: 'automatic'
+      syncType: "automatic",
     });
-
   } catch (error) {
-    console.error('Auto GitHub sync error:', error);
-    res.status(500).json({ 
-      message: 'Auto-sync failed',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    console.error("Auto GitHub sync error:", error);
+    res.status(500).json({
+      message: "Auto-sync failed",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Internal server error",
     });
   }
 });
 
 // Get coding streaks and achievements
-router.get('/streaks', authenticateToken, async (req, res) => {
+router.get("/streaks", authenticateToken, async (req, res) => {
   try {
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    
+
     // Get activities for the last 30 days
     const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-    
+
     const activities = await Activity.find({
       userId: req.user._id,
-      date: { $gte: thirtyDaysAgo }
+      date: { $gte: thirtyDaysAgo },
     }).sort({ date: 1 });
 
     // Group activities by day
     const dailyActivity = {};
-    activities.forEach(activity => {
-      const day = activity.date.toISOString().split('T')[0];
+    activities.forEach((activity) => {
+      const day = activity.date.toISOString().split("T")[0];
       if (!dailyActivity[day]) {
         dailyActivity[day] = {
           commits: 0,
           codingTime: 0,
-          totalActivity: 0
+          totalActivity: 0,
         };
       }
-      
-      if (activity.type === 'commit') {
+
+      if (activity.type === "commit") {
         dailyActivity[day].commits++;
-      } else if (activity.type === 'coding_session') {
+      } else if (activity.type === "coding_session") {
         dailyActivity[day].codingTime += activity.data.duration || 0;
       }
-      
+
       dailyActivity[day].totalActivity++;
     });
 
@@ -648,15 +691,16 @@ router.get('/streaks', authenticateToken, async (req, res) => {
     let currentStreak = 0;
     let longestStreak = 0;
     let tempStreak = 0;
-    
+
     // Check from today backwards
     for (let i = 0; i < 30; i++) {
       const checkDate = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-      const dayKey = checkDate.toISOString().split('T')[0];
-      
+      const dayKey = checkDate.toISOString().split("T")[0];
+
       if (dailyActivity[dayKey] && dailyActivity[dayKey].totalActivity > 0) {
         tempStreak++;
-        if (i === 0 || currentStreak === i) { // Continuous from today
+        if (i === 0 || currentStreak === i) {
+          // Continuous from today
           currentStreak = tempStreak;
         }
       } else {
@@ -666,7 +710,7 @@ router.get('/streaks', authenticateToken, async (req, res) => {
         tempStreak = 0;
       }
     }
-    
+
     if (tempStreak > longestStreak) {
       longestStreak = tempStreak;
     }
@@ -674,16 +718,16 @@ router.get('/streaks', authenticateToken, async (req, res) => {
     // Calculate weekly totals
     const weeklyStats = {
       thisWeek: { commits: 0, codingTime: 0 },
-      lastWeek: { commits: 0, codingTime: 0 }
+      lastWeek: { commits: 0, codingTime: 0 },
     };
 
     const oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
     const twoWeeksAgo = new Date(today.getTime() - 14 * 24 * 60 * 60 * 1000);
 
-    Object.keys(dailyActivity).forEach(day => {
+    Object.keys(dailyActivity).forEach((day) => {
       const dayDate = new Date(day);
       const stats = dailyActivity[day];
-      
+
       if (dayDate >= oneWeekAgo) {
         weeklyStats.thisWeek.commits += stats.commits;
         weeklyStats.thisWeek.codingTime += stats.codingTime;
@@ -695,44 +739,45 @@ router.get('/streaks', authenticateToken, async (req, res) => {
 
     // Calculate achievements
     const achievements = [];
-    
+
     if (currentStreak >= 7) {
       achievements.push({
-        id: 'week_warrior',
-        title: 'Week Warrior',
-        description: 'Coded for 7 days in a row',
-        icon: '🔥',
-        unlockedAt: new Date()
+        id: "week_warrior",
+        title: "Week Warrior",
+        description: "Coded for 7 days in a row",
+        icon: "🔥",
+        unlockedAt: new Date(),
       });
     }
-    
+
     if (currentStreak >= 30) {
       achievements.push({
-        id: 'month_master',
-        title: 'Month Master',
-        description: 'Coded for 30 days in a row',
-        icon: '👑',
-        unlockedAt: new Date()
+        id: "month_master",
+        title: "Month Master",
+        description: "Coded for 30 days in a row",
+        icon: "👑",
+        unlockedAt: new Date(),
       });
     }
-    
+
     if (weeklyStats.thisWeek.commits >= 10) {
       achievements.push({
-        id: 'commit_crusher',
-        title: 'Commit Crusher',
-        description: 'Made 10+ commits this week',
-        icon: '💪',
-        unlockedAt: new Date()
+        id: "commit_crusher",
+        title: "Commit Crusher",
+        description: "Made 10+ commits this week",
+        icon: "💪",
+        unlockedAt: new Date(),
       });
     }
-    
-    if (weeklyStats.thisWeek.codingTime >= 300) { // 5 hours
+
+    if (weeklyStats.thisWeek.codingTime >= 300) {
+      // 5 hours
       achievements.push({
-        id: 'time_titan',
-        title: 'Time Titan',
-        description: 'Coded for 5+ hours this week',
-        icon: '⏰',
-        unlockedAt: new Date()
+        id: "time_titan",
+        title: "Time Titan",
+        description: "Coded for 5+ hours this week",
+        icon: "⏰",
+        unlockedAt: new Date(),
       });
     }
 
@@ -741,40 +786,46 @@ router.get('/streaks', authenticateToken, async (req, res) => {
       longestStreak,
       weeklyStats,
       achievements,
-      dailyActivity: Object.keys(dailyActivity).slice(-7).reduce((acc, day) => {
-        acc[day] = dailyActivity[day];
-        return acc;
-      }, {})
+      dailyActivity: Object.keys(dailyActivity)
+        .slice(-7)
+        .reduce((acc, day) => {
+          acc[day] = dailyActivity[day];
+          return acc;
+        }, {}),
     });
-
   } catch (error) {
-    console.error('Streaks calculation error:', error);
-    res.status(500).json({ 
-      message: 'Failed to calculate streaks',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+    console.error("Streaks calculation error:", error);
+    res.status(500).json({
+      message: "Failed to calculate streaks",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Internal server error",
     });
   }
 });
 
 // Real-time GitHub sync with better error handling
-router.post('/sync-github-realtime', authenticateToken, async (req, res) => {
+router.post("/sync-github-realtime", authenticateToken, async (req, res) => {
   try {
     if (!req.user.accessToken) {
-      return res.status(400).json({ message: 'GitHub access token not found' });
+      return res.status(400).json({ message: "GitHub access token not found" });
     }
 
     const { forceSync = false } = req.body;
-    
+
     // Rate limiting check (unless forced)
     if (!forceSync) {
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
       if (req.user.lastCommitDate && req.user.lastCommitDate > fiveMinutesAgo) {
         return res.json({
-          message: 'Rate limited - sync too recent',
+          message: "Rate limited - sync too recent",
           lastSync: req.user.lastCommitDate,
-          nextSyncAvailable: new Date(req.user.lastCommitDate.getTime() + 5 * 60 * 1000),
+          nextSyncAvailable: new Date(
+            req.user.lastCommitDate.getTime() + 5 * 60 * 1000
+          ),
           newCommits: 0,
-          totalExperience: 0
+          totalExperience: 0,
         });
       }
     }
@@ -785,37 +836,42 @@ router.post('/sync-github-realtime', authenticateToken, async (req, res) => {
 
     // Get recent events with enhanced error handling
     try {
-      syncLog.push('🔍 Fetching recent GitHub events...');
-      
-      const eventsResponse = await axios.get('https://api.github.com/user/events', {
-        headers: {
-          'Authorization': `token ${req.user.accessToken}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'CodePets-App'
-        },
-        params: {
-          per_page: 100
-        },
-        timeout: 10000 // 10 second timeout
-      });
+      syncLog.push("🔍 Fetching recent GitHub events...");
+
+      const eventsResponse = await axios.get(
+        "https://api.github.com/user/events",
+        {
+          headers: {
+            Authorization: `token ${req.user.accessToken}`,
+            Accept: "application/vnd.github.v3+json",
+            "User-Agent": "CodePets-App",
+          },
+          params: {
+            per_page: 100,
+          },
+          timeout: 10000, // 10 second timeout
+        }
+      );
 
       syncLog.push(`📋 Found ${eventsResponse.data.length} recent events`);
-      
-      const pushEvents = eventsResponse.data.filter(e => e.type === 'PushEvent');
+
+      const pushEvents = eventsResponse.data.filter(
+        (e) => e.type === "PushEvent"
+      );
       syncLog.push(`🚀 Found ${pushEvents.length} push events`);
 
       for (const event of pushEvents) {
         if (event.payload && event.payload.commits) {
           for (const commit of event.payload.commits) {
             // Skip merge commits
-            if (commit.message.toLowerCase().includes('merge')) {
+            if (commit.message.toLowerCase().includes("merge")) {
               continue;
             }
 
             const existingActivity = await Activity.findOne({
               userId: req.user._id,
-              type: 'commit',
-              'data.commitHash': commit.sha
+              type: "commit",
+              "data.commitHash": commit.sha,
             });
 
             if (!existingActivity) {
@@ -824,40 +880,49 @@ router.post('/sync-github-realtime', authenticateToken, async (req, res) => {
               try {
                 if (commit.url) {
                   const detailResponse = await axios.get(commit.url, {
-                    headers: { 
-                      'Authorization': `token ${req.user.accessToken}`,
-                      'User-Agent': 'CodePets-App'
+                    headers: {
+                      Authorization: `token ${req.user.accessToken}`,
+                      "User-Agent": "CodePets-App",
                     },
-                    timeout: 5000
+                    timeout: 5000,
                   });
                   commitStats = {
                     additions: detailResponse.data.stats?.additions || 0,
-                    deletions: detailResponse.data.stats?.deletions || 0
+                    deletions: detailResponse.data.stats?.deletions || 0,
                   };
                 }
               } catch (detailError) {
-                syncLog.push(`⚠️ Could not get details for commit ${commit.sha.substring(0, 7)}`);
+                syncLog.push(
+                  `⚠️ Could not get details for commit ${commit.sha.substring(
+                    0,
+                    7
+                  )}`
+                );
               }
 
               const activity = new Activity({
                 userId: req.user._id,
-                type: 'commit',
+                type: "commit",
                 data: {
                   commitHash: commit.sha,
                   message: commit.message.substring(0, 200), // Truncate long messages
                   repository: event.repo.name,
                   additions: commitStats.additions,
                   deletions: commitStats.deletions,
-                  language: 'Unknown'
+                  language: "Unknown",
                 },
-                date: new Date(event.created_at)
+                date: new Date(event.created_at),
               });
 
               await activity.save();
               totalNewCommits++;
               totalExperience += activity.experience;
 
-              syncLog.push(`✅ Added commit: ${commit.message.substring(0, 50)}... (+${activity.experience} XP)`);
+              syncLog.push(
+                `✅ Added commit: ${commit.message.substring(0, 50)}... (+${
+                  activity.experience
+                } XP)`
+              );
 
               // Update pet
               const pet = await Pet.findOne({ userId: req.user._id });
@@ -875,65 +940,74 @@ router.post('/sync-github-realtime', authenticateToken, async (req, res) => {
       }
     } catch (eventsError) {
       syncLog.push(`❌ Events API error: ${eventsError.message}`);
-      
+
       // If events fail, try fallback approach
       if (eventsError.response?.status === 403) {
-        syncLog.push('🚫 Rate limited by GitHub - trying fallback approach');
-        
+        syncLog.push("🚫 Rate limited by GitHub - trying fallback approach");
+
         // Try getting from user's most recently updated repos
         try {
-          const reposResponse = await axios.get('https://api.github.com/user/repos', {
-            headers: { 
-              'Authorization': `token ${req.user.accessToken}`,
-              'User-Agent': 'CodePets-App'
-            },
-            params: { 
-              sort: 'updated',
-              per_page: 5
-            },
-            timeout: 10000
-          });
+          const reposResponse = await axios.get(
+            "https://api.github.com/user/repos",
+            {
+              headers: {
+                Authorization: `token ${req.user.accessToken}`,
+                "User-Agent": "CodePets-App",
+              },
+              params: {
+                sort: "updated",
+                per_page: 5,
+              },
+              timeout: 10000,
+            }
+          );
 
           for (const repo of reposResponse.data) {
             try {
-              const commitsResponse = await axios.get(`https://api.github.com/repos/${repo.full_name}/commits`, {
-                headers: { 
-                  'Authorization': `token ${req.user.accessToken}`,
-                  'User-Agent': 'CodePets-App'
-                },
-                params: {
-                  author: req.user.username,
-                  per_page: 10
+              const commitsResponse = await axios.get(
+                `https://api.github.com/repos/${repo.full_name}/commits`,
+                {
+                  headers: {
+                    Authorization: `token ${req.user.accessToken}`,
+                    "User-Agent": "CodePets-App",
+                  },
+                  params: {
+                    author: req.user.username,
+                    per_page: 10,
+                  },
                 }
-              });
+              );
 
-              for (const commit of commitsResponse.data.slice(0, 3)) { // Limit to 3 per repo
+              for (const commit of commitsResponse.data.slice(0, 3)) {
+                // Limit to 3 per repo
                 const existingActivity = await Activity.findOne({
                   userId: req.user._id,
-                  type: 'commit',
-                  'data.commitHash': commit.sha
+                  type: "commit",
+                  "data.commitHash": commit.sha,
                 });
 
                 if (!existingActivity) {
                   const activity = new Activity({
                     userId: req.user._id,
-                    type: 'commit',
+                    type: "commit",
                     data: {
                       commitHash: commit.sha,
                       message: commit.commit.message.substring(0, 200),
                       repository: repo.full_name,
                       additions: 0,
                       deletions: 0,
-                      language: repo.language || 'Unknown'
+                      language: repo.language || "Unknown",
                     },
-                    date: new Date(commit.commit.author.date)
+                    date: new Date(commit.commit.author.date),
                   });
 
                   await activity.save();
                   totalNewCommits++;
                   totalExperience += activity.experience;
 
-                  syncLog.push(`✅ Fallback: Added commit from ${repo.name} (+${activity.experience} XP)`);
+                  syncLog.push(
+                    `✅ Fallback: Added commit from ${repo.name} (+${activity.experience} XP)`
+                  );
 
                   const pet = await Pet.findOne({ userId: req.user._id });
                   if (pet) {
@@ -961,22 +1035,26 @@ router.post('/sync-github-realtime', authenticateToken, async (req, res) => {
     req.user.lastCommitDate = new Date();
     await req.user.save();
 
-    syncLog.push(`🎉 Sync complete: ${totalNewCommits} new commits, ${totalExperience} XP gained`);
+    syncLog.push(
+      `🎉 Sync complete: ${totalNewCommits} new commits, ${totalExperience} XP gained`
+    );
 
     res.json({
       message: `Successfully synced ${totalNewCommits} new commits`,
       newCommits: totalNewCommits,
       totalExperience: totalExperience,
       syncLog,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
-    console.error('Real-time GitHub sync error:', error);
-    res.status(500).json({ 
-      message: 'Failed to sync GitHub commits',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error',
-      syncLog: [`❌ Fatal error: ${error.message}`]
+    console.error("Real-time GitHub sync error:", error);
+    res.status(500).json({
+      message: "Failed to sync GitHub commits",
+      error:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Internal server error",
+      syncLog: [`❌ Fatal error: ${error.message}`],
     });
   }
 });

@@ -1,0 +1,336 @@
+/* Login Component Styles - Clean and Modern */
+.login-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  position: relative;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Simplified background particles */
+.background-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  font-size: 1.2rem;
+  animation: float 8s ease-in-out infinite;
+  opacity: 0.4;
+}
+
+.particle-1 { top: 15%; left: 10%; animation-delay: 0s; }
+.particle-2 { top: 70%; left: 85%; animation-delay: 2s; }
+.particle-3 { top: 85%; left: 15%; animation-delay: 4s; }
+.particle-4 { top: 25%; left: 80%; animation-delay: 6s; }
+.particle-5 { top: 60%; left: 60%; animation-delay: 1s; }
+.particle-6 { top: 10%; left: 70%; animation-delay: 3s; }
+
+@keyframes float {
+  0%, 100% { 
+    transform: translateY(0px) translateX(0px); 
+    opacity: 0.4;
+  }
+  50% { 
+    transform: translateY(-15px) translateX(10px); 
+    opacity: 0.6;
+  }
+}
+
+/* Hero Section */
+.login-hero {
+  text-align: center;
+  margin-bottom: 2rem;
+  z-index: 2;
+  position: relative;
+  max-width: 600px;
+}
+
+.hero-content {
+  max-width: 600px;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50px;
+  padding: 0.5rem 1.5rem;
+  margin-bottom: 2rem;
+  animation: slideDown 0.8s ease-out;
+}
+
+.badge-text {
+  color: white;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.hero-title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  animation: slideUp 1s ease-out 0.2s both;
+}
+
+.title-line-1 {
+  display: block;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-bottom: 0.5rem;
+}
+
+.title-line-2 {
+  display: block;
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  position: relative;
+}
+
+.code-text {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  color: #10b981;
+  text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+  -webkit-text-fill-color: #10b981;
+}
+
+.pets-text {
+  background: linear-gradient(135deg, #f472b6 0%, #ec4899 50%, #be185d 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.125rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  margin-bottom: 0;
+  animation: slideUp 1s ease-out 0.4s both;
+}
+
+/* Login Card */
+.login-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  z-index: 2;
+  position: relative;
+  max-width: 500px;
+  width: 100%;
+  animation: slideUp 1s ease-out 0.6s both;
+}
+
+.card-glow {
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #667eea, #764ba2, #667eea);
+  border-radius: 20px;
+  z-index: -1;
+  opacity: 0.6;
+  filter: blur(10px);
+}
+
+.login-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Evolution Showcase */
+.evolution-showcase {
+  margin-bottom: 2rem;
+}
+
+.showcase-title {
+  color: white;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.evolution-timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.timeline-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.stage-active {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.stage-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.stage-name {
+  font-size: 0.75rem;
+  color: white;
+  font-weight: 500;
+}
+
+/* GitHub Login Button */
+.github-login-section {
+  text-align: center;
+}
+
+.github-description {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.github-button {
+  background: linear-gradient(135deg, #24292e 0%, #1a1e22 100%);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.github-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #2c3338 0%, #24292e 100%);
+}
+
+.github-button:active {
+  transform: translateY(0);
+}
+
+.github-icon {
+  font-size: 1.25rem;
+}
+
+/* Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 1rem;
+  }
+  
+  .login-hero {
+    margin-bottom: 1.5rem;
+  }
+  
+  .hero-title {
+    font-size: clamp(2rem, 8vw, 3rem);
+    margin-bottom: 1rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .login-card {
+    padding: 1.5rem;
+  }
+  
+  .evolution-timeline {
+    gap: 0.25rem;
+  }
+  
+  .stage-icon {
+    font-size: 1.25rem;
+  }
+  
+  .stage-name {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 0.75rem;
+  }
+  
+  .hero-badge {
+    padding: 0.375rem 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .badge-text {
+    font-size: 0.8rem;
+  }
+  
+  .login-card {
+    padding: 1.25rem;
+  }
+  
+  .github-button {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .evolution-timeline {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
