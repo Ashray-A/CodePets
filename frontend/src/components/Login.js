@@ -13,8 +13,7 @@ function Login() {
           <p>Your coding companion that grows with your programming journey!</p>
         </div>
         
-        <div className="login-content">
-          <div className="pet-preview">
+        <div className="login-content">          <div className="pet-preview">
             <div className="pet-stages-preview">
               <span className="stage-preview">🥚</span>
               <span className="arrow">→</span>
@@ -24,9 +23,17 @@ function Login() {
               <span className="arrow">→</span>
               <span className="stage-preview">🐥</span>
               <span className="arrow">→</span>
+              <span className="stage-preview">🦆</span>
+              <span className="arrow">→</span>
+              <span className="stage-preview">🦢</span>
+              <span className="arrow">→</span>
               <span className="stage-preview">🦅</span>
+              <span className="arrow">→</span>
+              <span className="stage-preview">🦉</span>
+              <span className="arrow">→</span>
+              <span className="stage-preview">🐲</span>
             </div>
-            <p className="preview-text">Watch your pet evolve as you code!</p>
+            <p className="preview-text">Watch your pet evolve through 9 amazing stages as you code!</p>
           </div>
           
           <div className="login-actions">

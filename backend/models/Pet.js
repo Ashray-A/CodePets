@@ -10,10 +10,9 @@ const petSchema = new mongoose.Schema({
   name: {
     type: String,
     default: 'My Pet'
-  },
-  stage: {
+  },  stage: {
     type: String,
-    enum: ['egg', 'baby', 'teen', 'adult', 'master'],
+    enum: ['egg', 'hatching', 'baby', 'juvenile', 'teen', 'young_adult', 'adult', 'elder', 'legendary'],
     default: 'egg'
   },
   experience: {
@@ -58,20 +57,28 @@ const petSchema = new mongoose.Schema({
 // Experience thresholds for each stage
 petSchema.statics.STAGE_THRESHOLDS = {
   egg: 0,
-  baby: 100,
-  teen: 500,
-  adult: 1500,
-  master: 3000
+  hatching: 50,
+  baby: 150,
+  juvenile: 350,
+  teen: 650,
+  young_adult: 1100,
+  adult: 1800,
+  elder: 2800,
+  legendary: 4500
 };
 
 // Calculate pet stage based on experience
 petSchema.methods.calculateStage = function() {
   const thresholds = this.constructor.STAGE_THRESHOLDS;
   
-  if (this.experience >= thresholds.master) return 'master';
+  if (this.experience >= thresholds.legendary) return 'legendary';
+  if (this.experience >= thresholds.elder) return 'elder';
   if (this.experience >= thresholds.adult) return 'adult';
+  if (this.experience >= thresholds.young_adult) return 'young_adult';
   if (this.experience >= thresholds.teen) return 'teen';
+  if (this.experience >= thresholds.juvenile) return 'juvenile';
   if (this.experience >= thresholds.baby) return 'baby';
+  if (this.experience >= thresholds.hatching) return 'hatching';
   return 'egg';
 };
 

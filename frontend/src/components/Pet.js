@@ -12,14 +12,17 @@ function Pet({ pet }) {
       </div>
     );
   }
-
   const getPetEmoji = (stage) => {
     const emojis = {
       egg: '🥚',
-      baby: '🐣',
-      teen: '🐤',
-      adult: '🐥',
-      master: '🦅'
+      hatching: '🐣',
+      baby: '🐤',
+      juvenile: '🐥',
+      teen: '🦆',
+      young_adult: '🦢',
+      adult: '🦅',
+      elder: '🦉',
+      legendary: '🐲'
     };
     return emojis[stage] || '🥚';
   };
@@ -27,30 +30,35 @@ function Pet({ pet }) {
   const getProgressPercentage = (current, max) => {
     return Math.min((current / max) * 100, 100);
   };
-
   const getNextThreshold = () => {
     const thresholds = pet.stageThresholds || {
       egg: 0,
-      baby: 100,
-      teen: 500,
-      adult: 1500,
-      master: 3000
+      hatching: 50,
+      baby: 150,
+      juvenile: 350,
+      teen: 650,
+      young_adult: 1100,
+      adult: 1800,
+      elder: 2800,
+      legendary: 4500
     };
     
-    const stages = ['egg', 'baby', 'teen', 'adult', 'master'];
+    const stages = ['egg', 'hatching', 'baby', 'juvenile', 'teen', 'young_adult', 'adult', 'elder', 'legendary'];
     const currentIndex = stages.indexOf(pet.stage);
     const nextStage = stages[currentIndex + 1];
     
-    return nextStage ? thresholds[nextStage] : thresholds.master;
-  };
-
-  const getStageStatus = (stage) => {
+    return nextStage ? thresholds[nextStage] : thresholds.legendary;
+  };  const getStageStatus = (stage) => {
     const thresholds = pet.stageThresholds || {
       egg: 0,
-      baby: 100,
-      teen: 500,
-      adult: 1500,
-      master: 3000
+      hatching: 50,
+      baby: 150,
+      juvenile: 350,
+      teen: 650,
+      young_adult: 1100,
+      adult: 1800,
+      elder: 2800,
+      legendary: 4500
     };
     
     if (pet.experience >= thresholds[stage]) {
