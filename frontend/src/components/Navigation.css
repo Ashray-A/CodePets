@@ -1,10 +1,10 @@
 /* Navigation Component Styles */
-.navigation {
+.dashboard-navigation {
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius-2xl);
+  box-shadow: var(--shadow-lg);
   padding: 0.5rem;
-  border: 1px solid #f3f4f6;
+  border: 1px solid var(--gray-100);
 }
 
 .nav-tabs {
@@ -21,7 +21,7 @@
   gap: 0.5rem;
   padding: 1rem 0.75rem;
   border: none;
-  border-radius: 12px;
+  border-radius: var(--border-radius-xl);
   background: transparent;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -31,17 +31,17 @@
 }
 
 .nav-tab:hover {
-  background: #f9fafb;
+  background: var(--gray-50);
   transform: translateY(-1px);
 }
 
-.nav-tab.active {
-  background: #eff6ff;
-  color: #1d4ed8;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+.nav-tab--active {
+  background: var(--primary-50);
+  color: var(--primary-700);
+  box-shadow: var(--shadow-sm);
 }
 
-.nav-tab.active::before {
+.nav-tab--active::before {
   content: '';
   position: absolute;
   bottom: 0;
@@ -49,23 +49,23 @@
   transform: translateX(-50%);
   width: 2rem;
   height: 3px;
-  background: #3b82f6;
+  background: var(--primary-500);
   border-radius: 2px;
 }
 
-.nav-icon {
+.nav-tab-icon {
   font-size: 1.5rem;
   line-height: 1;
 }
 
-.nav-label {
+.nav-tab-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #4b5563;
+  color: var(--gray-600);
 }
 
-.nav-tab.active .nav-label {
-  color: #1d4ed8;
+.nav-tab--active .nav-tab-label {
+  color: var(--primary-700);
 }
 
 /* Mobile Responsive */

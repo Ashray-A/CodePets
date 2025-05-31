@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import Navigation from "./Navigation";
-import OverviewTab from "./OverviewTab";
-import ProgressTab from "./ProgressTab";
-import ActivitiesTab from "./ActivitiesTab";
-import AchievementsTab from "./AchievementsTab";
+import Pet from "./Pet";
+import TimeLogger from "./TimeLogger";
+import GitHubSync from "./GitHubSync";
+import ActivityFeed from "./ActivityFeed";
+import Streaks from "./Streaks";
+import Achievements from "./Achievements";
 import { petAPI } from "../services/api";
 import "./Dashboard.css";
 
@@ -12,7 +13,6 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activityRefreshTrigger, setActivityRefreshTrigger] = useState(0);
-  const [activeTab, setActiveTab] = useState("overview");
 
   // Fetch pet data on component mount
   useEffect(() => {
@@ -61,7 +61,7 @@ function Dashboard() {
     return (
       <div className="dashboard">
         <div className="loading-container">
-          <div className="loading-spinner"></div>
+          <div className="spinner"></div>
           <p className="loading-text">Loading your pet...</p>
         </div>
       </div>
@@ -91,33 +91,41 @@ function Dashboard() {
       </div>
     );
   }
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case "overview":
-        return (
-          <OverviewTab pet={pet} onActivityLogged={handleActivityLogged} />
-        );
-      case "progress":
-        return <ProgressTab pet={pet} />;
-      case "activities":
-        return (
-          <ActivitiesTab activityRefreshTrigger={activityRefreshTrigger} />
-        );
-      case "achievements":
-        return <AchievementsTab />;
-      default:
-        return (
-          <OverviewTab pet={pet} onActivityLogged={handleActivityLogged} />
-        );
-    }
-  };
-
   return (
     <div className="dashboard">
       <main className="dashboard-main">
-        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-        <div className="dashboard-content">{renderTabContent()}</div>
+        <div className="dashboard-grid">
+          {/* Left Column - Pet and Actions */}
+          <div className="dashboard-left">
+            {/* Pet Display */}
+            <div className="pet-section">
+              <Pet pet={pet} />
+            </div>
+
+            {/* Actions Grid */}
+            <div className="actions-grid">
+              {/* Time Logger */}
+              <div className="action-card">
+                <div className="action-header">
+                  <div className="action-icon time-tracker">⏱️</div>
+                  <h3 className="action-title">Coding Time Tracker</h3>
+                </div>
+                <TimeLogger onActivityLogged={handleActivityLogged} />
+              </div>
+            </div>
+
+            {/* GitHub Sync - Full Width */}
+            <div className="github-sync-section">
+              <GitHubSync onSyncComplete={handleActivityLogged} />
+            </div>
+          </div>{" "}
+          {/* Right Sidebar */}
+          <div className="dashboard-right">
+            <Streaks refreshTrigger={activityRefreshTrigger} />
+            <Achievements refreshTrigger={activityRefreshTrigger} />
+            <ActivityFeed refreshTrigger={activityRefreshTrigger} />
+          </div>
+        </div>
       </main>
     </div>
   );
