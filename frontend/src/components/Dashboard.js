@@ -27,21 +27,24 @@ function Dashboard() {
       setError(null);
     } catch (err) {
       console.error("Failed to fetch pet data:", err);
-      setError("Failed to load pet data");
-      // Create default pet data for demo when backend is not available
+      setError("Failed to load pet data");      // Create default pet data for demo when backend is not available
       setPet({
         name: "My Pet",
         stage: "egg",
         experience: 0,
         happiness: 50,
         health: 100,
-        nextThreshold: 100,
+        nextThreshold: 50,
         stageThresholds: {
           egg: 0,
-          baby: 100,
-          teen: 500,
-          adult: 1500,
-          master: 3000,
+          hatching: 50,
+          baby: 150,
+          juvenile: 350,
+          teen: 650,
+          young_adult: 1100,
+          adult: 1800,
+          elder: 2800,
+          legendary: 4500,
         },
       });
     } finally {

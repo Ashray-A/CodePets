@@ -48,7 +48,9 @@ function Pet({ pet }) {
     const nextStage = stages[currentIndex + 1];
     
     return nextStage ? thresholds[nextStage] : thresholds.legendary;
-  };  const getStageStatus = (stage) => {
+  };
+
+  const getStageStatus = (stage) => {
     const thresholds = pet.stageThresholds || {
       egg: 0,
       hatching: 50,

@@ -41,13 +41,12 @@ router.get('/', authenticateToken, async (req, res) => {
       });
       await pet.save();
     }
-    
-    // Calculate next stage threshold
+      // Calculate next stage threshold
     const thresholds = Pet.STAGE_THRESHOLDS;
     const currentStage = pet.stage;
     let nextThreshold = null;
     
-    const stages = ['egg', 'baby', 'teen', 'adult', 'master'];
+    const stages = ['egg', 'hatching', 'baby', 'juvenile', 'teen', 'young_adult', 'adult', 'elder', 'legendary'];
     const currentIndex = stages.indexOf(currentStage);
     if (currentIndex < stages.length - 1) {
       const nextStage = stages[currentIndex + 1];
