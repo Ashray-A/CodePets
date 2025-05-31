@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import Pet from "./Pet";
-import TimeLogger from "./TimeLogger";
-import GitHubSync from "./GitHubSync";
-import ActivityFeed from "./ActivityFeed";
-import Streaks from "./Streaks";
-import Achievements from "./Achievements";
+import Navigation from "./Navigation";
+import OverviewTab from "./OverviewTab";
+import ProgressTab from "./ProgressTab";
+import ActivitiesTab from "./ActivitiesTab";
+import AchievementsTab from "./AchievementsTab";
 import { petAPI } from "../services/api";
 import "./Dashboard.css";
 
@@ -12,6 +11,7 @@ function Dashboard() {
   const [pet, setPet] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('overview');
   const [activityRefreshTrigger, setActivityRefreshTrigger] = useState(0);
 
   // Fetch pet data on component mount
@@ -50,13 +50,48 @@ function Dashboard() {
     } finally {
       setLoading(false);
     }
-  };
-  const handleActivityLogged = async (activityData) => {
+  };  const handleActivityLogged = async (activityData) => {
     // Refresh pet data when new activity is logged
     await fetchPetData();
     // Trigger activity feed refresh
     setActivityRefreshTrigger((prev) => prev + 1);
   };
+
+  const handleSyncComplete = async () => {
+    // Refresh pet data when GitHub sync is complete
+    await fetchPetData();
+    setActivityRefreshTrigger((prev) => prev + 1);
+  };
+
+  const renderActiveTab = () => {
+    switch (activeTab) {
+      case 'overview':
+        return (
+          <OverviewTab 
+            pet={pet} 
+            onActivityLogged={handleActivityLogged}
+            onSyncComplete={handleSyncComplete}
+            refreshTrigger={activityRefreshTrigger}
+          />
+        );
+      case 'progress':
+        return <ProgressTab />;
+      case 'activities':
+        return <ActivitiesTab />;
+      case 'achievements':
+        return <AchievementsTab />;
+      default:
+        return (
+          <OverviewTab 
+            pet={pet} 
+            onActivityLogged={handleActivityLogged}
+            onSyncComplete={handleSyncComplete}
+            refreshTrigger={activityRefreshTrigger}
+          />
+        );
+    }
+  };
+
   if (loading) {
     return (
       <div className="dashboard">
@@ -67,6 +102,7 @@ function Dashboard() {
       </div>
     );
   }
+
   if (error) {
     return (
       <div className="dashboard">
@@ -91,42 +127,15 @@ function Dashboard() {
       </div>
     );
   }
+
   return (
     <div className="dashboard">
-      <main className="dashboard-main">
-        <div className="dashboard-grid">
-          {/* Left Column - Pet and Actions */}
-          <div className="dashboard-left">
-            {/* Pet Display */}
-            <div className="pet-section">
-              <Pet pet={pet} />
-            </div>
-
-            {/* Actions Grid */}
-            <div className="actions-grid">
-              {/* Time Logger */}
-              <div className="action-card">
-                <div className="action-header">
-                  <div className="action-icon time-tracker">⏱️</div>
-                  <h3 className="action-title">Coding Time Tracker</h3>
-                </div>
-                <TimeLogger onActivityLogged={handleActivityLogged} />
-              </div>
-            </div>
-
-            {/* GitHub Sync - Full Width */}
-            <div className="github-sync-section">
-              <GitHubSync onSyncComplete={handleActivityLogged} />
-            </div>
-          </div>{" "}
-          {/* Right Sidebar */}
-          <div className="dashboard-right">
-            <Streaks refreshTrigger={activityRefreshTrigger} />
-            <Achievements refreshTrigger={activityRefreshTrigger} />
-            <ActivityFeed refreshTrigger={activityRefreshTrigger} />
-          </div>
-        </div>
-      </main>
+      <div className="dashboard-container">
+        <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
+        <main className="dashboard-content">
+          {renderActiveTab()}
+        </main>
+      </div>
     </div>
   );
 }
