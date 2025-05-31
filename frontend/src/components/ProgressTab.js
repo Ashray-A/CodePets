@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { activityAPI } from '../services/api';
-import './ProgressTab.css';
+import React, { useState, useEffect } from "react";
+import { activityAPI } from "../services/api";
+import "./ProgressTab.css";
 
 const ProgressTab = () => {
   const [stats, setStats] = useState({
-    totalXP: 0,
     level: 1,
+    currentXP: 0,
     xpToNextLevel: 100,
-    weeklyGoal: 1000,
+    totalXP: 0,
+    weeklyGoal: 500,
     weeklyProgress: 0,
-    streaks: {
-      current: 0,
-      longest: 0
-    }
+    currentStreak: 0,
+    longestStreak: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,40 +23,46 @@ const ProgressTab = () => {
   const fetchProgressData = async () => {
     try {
       setLoading(true);
-      const [todayStats, activities] = await Promise.all([
-        activityAPI.getTodayStats(),
-        activityAPI.getActivities()
-      ]);
+      const [todayStats] = await Promise.all([activityAPI.getTodayStats()]);
 
-      // Calculate level and XP
-      const level = Math.floor(todayStats.totalXP / 100) + 1;
-      const xpToNextLevel = 100 - (todayStats.totalXP % 100);
+      // Calculate level and XP progression
+      const totalXP = todayStats.totalXP || 0;
+      const level = Math.floor(totalXP / 100) + 1;
+      const currentXP = totalXP % 100;
+      const xpToNextLevel = 100 - currentXP;
 
-      // Calculate weekly progress (last 7 days)
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      
-      const weeklyXP = activities
-        .filter(activity => new Date(activity.timestamp) >= oneWeekAgo)
-        .reduce((total, activity) => total + (activity.xp || 0), 0);
+      // Calculate weekly progress (mock data for now)
+      const weeklyGoal = 500;
+      const weeklyProgress = Math.min(totalXP * 0.7, weeklyGoal); // Mock calculation
+
+      // Get streak data (mock for now)
+      const currentStreak = 3; // Would calculate from actual activity data
+      const longestStreak = 7; // Would calculate from actual activity data
 
       setStats({
-        totalXP: todayStats.totalXP,
         level,
+        currentXP,
         xpToNextLevel,
-        weeklyGoal: 1000,
-        weeklyProgress: weeklyXP,
-        streaks: {
-          current: 5, // TODO: Calculate from actual data
-          longest: 12 // TODO: Calculate from actual data
-        }
+        totalXP,
+        weeklyGoal,
+        weeklyProgress,
+        currentStreak,
+        longestStreak,
       });
     } catch (err) {
-      console.error('Error fetching progress data:', err);
-      setError('Failed to load progress data');
+      console.error("Error fetching progress data:", err);
+      setError("Failed to load progress data");
     } finally {
       setLoading(false);
     }
+  };
+
+  const getLevelProgressPercentage = () => {
+    return (stats.currentXP / 100) * 100;
+  };
+
+  const getWeeklyProgressPercentage = () => {
+    return (stats.weeklyProgress / stats.weeklyGoal) * 100;
   };
 
   if (loading) {
@@ -76,9 +81,6 @@ const ProgressTab = () => {
     );
   }
 
-  const weeklyProgressPercentage = Math.min((stats.weeklyProgress / stats.weeklyGoal) * 100, 100);
-  const levelProgressPercentage = ((100 - stats.xpToNextLevel) / 100) * 100;
-
   return (
     <div className="progress-tab">
       <div className="progress-header">
@@ -87,75 +89,77 @@ const ProgressTab = () => {
       </div>
 
       <div className="progress-grid">
-        {/* Level Progress */}
-        <div className="progress-card level-card">
+        {/* Level Progress Card */}
+        <div className="progress-card">
           <div className="card-header">
             <h3>Level Progress</h3>
-            <span className="level-badge">Level {stats.level}</span>
+            <div className="level-badge">Level {stats.level}</div>
           </div>
           <div className="level-progress">
             <div className="progress-bar">
-              <div 
-                className="progress-fill" 
-                style={{ width: `${levelProgressPercentage}%` }}
+              <div
+                className="progress-fill"
+                style={{ width: `${getLevelProgressPercentage()}%` }}
               ></div>
             </div>
             <div className="progress-text">
-              {100 - stats.xpToNextLevel} / 100 XP
+              {stats.currentXP} / 100 XP to next level
             </div>
           </div>
           <p className="progress-subtitle">
-            {stats.xpToNextLevel} XP to Level {stats.level + 1}
+            {stats.xpToNextLevel} XP needed for Level {stats.level + 1}
           </p>
         </div>
 
-        {/* Total XP */}
-        <div className="progress-card xp-card">
+        {/* Total XP Card */}
+        <div className="progress-card">
           <div className="card-header">
-            <h3>Total Experience</h3>
+            <h3>Experience Points</h3>
             <span className="xp-icon">⭐</span>
           </div>
           <div className="xp-amount">{stats.totalXP.toLocaleString()}</div>
-          <p className="progress-subtitle">XP Earned</p>
+          <p className="progress-subtitle">Total XP earned</p>
         </div>
 
-        {/* Weekly Goal */}
-        <div className="progress-card weekly-card">
+        {/* Weekly Goal Card */}
+        <div className="progress-card">
           <div className="card-header">
             <h3>Weekly Goal</h3>
             <span className="goal-icon">🎯</span>
           </div>
           <div className="weekly-progress">
             <div className="progress-bar">
-              <div 
-                className="progress-fill weekly" 
-                style={{ width: `${weeklyProgressPercentage}%` }}
+              <div
+                className="progress-fill weekly"
+                style={{ width: `${getWeeklyProgressPercentage()}%` }}
               ></div>
             </div>
             <div className="progress-text">
-              {stats.weeklyProgress} / {stats.weeklyGoal} XP
+              {Math.round(stats.weeklyProgress)} / {stats.weeklyGoal} XP this
+              week
             </div>
           </div>
           <p className="progress-subtitle">
-            {Math.round(weeklyProgressPercentage)}% Complete
+            {Math.round(getWeeklyProgressPercentage())}% of weekly goal
+            completed
           </p>
         </div>
 
-        {/* Streaks */}
-        <div className="progress-card streaks-card">
+        {/* Streaks Card */}
+        <div className="progress-card">
           <div className="card-header">
             <h3>Coding Streaks</h3>
             <span className="streak-icon">🔥</span>
           </div>
           <div className="streaks-content">
             <div className="streak-item">
-              <span className="streak-value">{stats.streaks.current}</span>
-              <span className="streak-label">Current Streak</span>
+              <span className="streak-value">{stats.currentStreak}</span>
+              <span className="streak-label">Current</span>
             </div>
             <div className="streak-divider"></div>
             <div className="streak-item">
-              <span className="streak-value">{stats.streaks.longest}</span>
-              <span className="streak-label">Longest Streak</span>
+              <span className="streak-value">{stats.longestStreak}</span>
+              <span className="streak-label">Best</span>
             </div>
           </div>
         </div>
