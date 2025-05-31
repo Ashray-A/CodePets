@@ -103,11 +103,14 @@ body {
 }
 
 .main-content {
+  min-height: 100vh;
+  padding: 0;
+}
+
+/* Add padding only when header is present (authenticated pages) */
+.main-content.with-header {
   min-height: calc(100vh - 4rem); /* Account for header height */
   padding-top: 4rem; /* Account for fixed header */
-  padding-left: 0;
-  padding-right: 0;
-  padding-bottom: 0;
 }
 
 /* Utility Classes */

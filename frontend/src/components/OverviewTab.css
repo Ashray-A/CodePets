@@ -1,0 +1,280 @@
+/* Overview Tab Styles */
+.overview-tab {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+  min-height: calc(100vh - 120px);
+}
+
+/* Header Section - Pet Display */
+.overview-header {
+  margin-bottom: 1.5rem;
+}
+
+.pet-section {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 1.25rem;
+  padding: 2rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.pet-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.pet-section:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Content Section - Action Cards */
+.overview-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (min-width: 768px) {
+  .overview-content {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .overview-content {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Card Base Styles */
+.quick-actions-card,
+.quick-stats-card,
+.github-sync-card {
+  background: #ffffff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+  transition: all 0.3s ease;
+  position: relative;
+  height: fit-content;
+}
+
+.quick-actions-card:hover,
+.quick-stats-card:hover,
+.github-sync-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.12), 0 8px 10px -6px rgba(0, 0, 0, 0.08);
+  border-color: #e2e8f0;
+}
+
+/* Card Titles */
+.overview-tab .card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #374151 !important;
+  margin-bottom: 1rem;
+  letter-spacing: -0.025em;
+}
+
+.card-icon {
+  font-size: 1.5rem;
+  opacity: 0.9;
+}
+
+
+
+/* Stats Grid */
+.stats-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  min-height: 60px;
+  gap: 1rem;
+}
+
+.stat-item:hover {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.15);
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #475569 !important;
+  line-height: 1.2;
+  margin-bottom: 0.125rem;
+  letter-spacing: -0.025em;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #64748b !important;
+  text-transform: capitalize;
+  letter-spacing: 0.025em;
+  line-height: 1.2;
+}
+
+.stat-icon {
+  font-size: 1.25rem;
+  opacity: 0.7;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Action Content */
+.action-content {
+  margin-top: 0;
+}
+
+/* GitHub Sync Card Specific Fixes */
+.github-sync-card .github-sync {
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  margin: 0;
+}
+
+.github-sync-card .github-header {
+  margin-bottom: 1rem;
+}
+
+.github-sync-card .stats-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 0.875rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.github-sync-card .stats-title {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.75rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .overview-content {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+  
+  .pet-section {
+    padding: 1.5rem;
+  }
+  
+  .quick-actions-card,
+  .quick-stats-card,
+  .github-sync-card {
+    padding: 1.25rem;
+  }
+  
+  .stats-grid {
+    gap: 0.875rem;
+  }
+  
+  .stat-item {
+    padding: 0.75rem;
+    min-height: 55px;
+  }
+  
+  .card-title {
+    font-size: 0.9375rem;
+    margin-bottom: 0.875rem;
+  }
+  
+  .stat-value {
+    font-size: 1rem;
+  }
+  
+  .stat-label {
+    font-size: 0.6875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .overview-header {
+    margin-bottom: 1.25rem;
+  }
+  
+  .pet-section {
+    padding: 1.25rem;
+  }
+  
+  .quick-actions-card,
+  .quick-stats-card,
+  .github-sync-card {
+    padding: 1rem;
+  }
+  
+  .card-title {
+    font-size: 0.875rem;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .card-icon {
+    font-size: 1rem;
+  }
+  
+  .stat-item {
+    padding: 0.625rem;
+    min-height: 50px;
+  }
+  
+  .stat-value {
+    font-size: 0.9375rem;
+  }
+  
+  .stat-label {
+    font-size: 0.625rem;
+  }
+  
+  .stat-icon {
+    font-size: 1rem;
+  }
+}

@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Set up axios defaults
 const API_BASE_URL =
-  process.env.REACT_APP_API_URL || "http://localhost:5001/api";
+  process.env.REACT_APP_API_URL || "http://localhost:5000/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -63,6 +63,7 @@ export const activityAPI = {
   logManualSession: (data) => api.post("/activities/manual-log", data),
   syncGitHub: (repos) => api.post("/activities/sync-github", { repos }),
   getStats: (period) => api.get("/activities/stats", { params: { period } }),
+  getTodayStats: () => api.get("/activities/today"),
 };
 
 // Generic API for custom requests
