@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { activityAPI } from "../services/api";
-import "./ProgressTab.css";
+import React, { useState, useEffect } from 'react';
+import { activityAPI } from '../services/api';
+import './ProgressTab.css';
 
 const ProgressTab = () => {
   const [stats, setStats] = useState({
@@ -11,7 +11,7 @@ const ProgressTab = () => {
     weeklyGoal: 500,
     weeklyProgress: 0,
     currentStreak: 0,
-    longestStreak: 0,
+    longestStreak: 0
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,8 +22,9 @@ const ProgressTab = () => {
 
   const fetchProgressData = async () => {
     try {
-      setLoading(true);
-      const [todayStats] = await Promise.all([activityAPI.getTodayStats()]);
+      setLoading(true);      const [todayStats] = await Promise.all([
+        activityAPI.getTodayStats()
+      ]);
 
       // Calculate level and XP progression
       const totalXP = todayStats.totalXP || 0;
@@ -47,11 +48,12 @@ const ProgressTab = () => {
         weeklyGoal,
         weeklyProgress,
         currentStreak,
-        longestStreak,
+        longestStreak
       });
+
     } catch (err) {
-      console.error("Error fetching progress data:", err);
-      setError("Failed to load progress data");
+      console.error('Error fetching progress data:', err);
+      setError('Failed to load progress data');
     } finally {
       setLoading(false);
     }
@@ -97,7 +99,7 @@ const ProgressTab = () => {
           </div>
           <div className="level-progress">
             <div className="progress-bar">
-              <div
+              <div 
                 className="progress-fill"
                 style={{ width: `${getLevelProgressPercentage()}%` }}
               ></div>
@@ -129,19 +131,17 @@ const ProgressTab = () => {
           </div>
           <div className="weekly-progress">
             <div className="progress-bar">
-              <div
+              <div 
                 className="progress-fill weekly"
                 style={{ width: `${getWeeklyProgressPercentage()}%` }}
               ></div>
             </div>
             <div className="progress-text">
-              {Math.round(stats.weeklyProgress)} / {stats.weeklyGoal} XP this
-              week
+              {Math.round(stats.weeklyProgress)} / {stats.weeklyGoal} XP this week
             </div>
           </div>
           <p className="progress-subtitle">
-            {Math.round(getWeeklyProgressPercentage())}% of weekly goal
-            completed
+            {Math.round(getWeeklyProgressPercentage())}% of weekly goal completed
           </p>
         </div>
 
