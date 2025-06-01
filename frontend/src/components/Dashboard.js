@@ -11,7 +11,7 @@ function Dashboard() {
   const [pet, setPet] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [activityRefreshTrigger, setActivityRefreshTrigger] = useState(0);
 
   // Fetch pet data on component mount
@@ -27,30 +27,32 @@ function Dashboard() {
       setError(null);
     } catch (err) {
       console.error("Failed to fetch pet data:", err);
-      setError("Failed to load pet data"); // Create default pet data for demo when backend is not available
+      setError("Failed to load pet data");
+      // Create default pet data for demo when backend is not available
       setPet({
         name: "My Pet",
         stage: "egg",
         experience: 0,
         happiness: 50,
         health: 100,
-        nextThreshold: 50,
+        nextThreshold: 200,
         stageThresholds: {
           egg: 0,
-          hatching: 50,
-          baby: 150,
-          juvenile: 350,
-          teen: 650,
-          young_adult: 1100,
-          adult: 1800,
-          elder: 2800,
-          legendary: 4500,
+          hatching: 200,
+          baby: 600,
+          juvenile: 1500,
+          teen: 3000,
+          young_adult: 5500,
+          adult: 9000,
+          elder: 15000,
+          legendary: 25000,
         },
       });
     } finally {
       setLoading(false);
     }
-  };  const handleActivityLogged = async (activityData) => {
+  };
+  const handleActivityLogged = async (activityData) => {
     // Refresh pet data when new activity is logged
     await fetchPetData();
     // Trigger activity feed refresh
@@ -65,25 +67,25 @@ function Dashboard() {
 
   const renderActiveTab = () => {
     switch (activeTab) {
-      case 'overview':
+      case "overview":
         return (
-          <OverviewTab 
-            pet={pet} 
+          <OverviewTab
+            pet={pet}
             onActivityLogged={handleActivityLogged}
             onSyncComplete={handleSyncComplete}
             refreshTrigger={activityRefreshTrigger}
           />
         );
-      case 'progress':
+      case "progress":
         return <ProgressTab />;
-      case 'activities':
+      case "activities":
         return <ActivitiesTab />;
-      case 'achievements':
+      case "achievements":
         return <AchievementsTab />;
       default:
         return (
-          <OverviewTab 
-            pet={pet} 
+          <OverviewTab
+            pet={pet}
             onActivityLogged={handleActivityLogged}
             onSyncComplete={handleSyncComplete}
             refreshTrigger={activityRefreshTrigger}
@@ -132,9 +134,7 @@ function Dashboard() {
     <div className="dashboard">
       <div className="dashboard-container">
         <Navigation activeTab={activeTab} setActiveTab={setActiveTab} />
-        <main className="dashboard-content">
-          {renderActiveTab()}
-        </main>
+        <main className="dashboard-content">{renderActiveTab()}</main>
       </div>
     </div>
   );

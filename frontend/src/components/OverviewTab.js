@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import Pet from './Pet';
-import TimeLogger from './TimeLogger';
-import GitHubSync from './GitHubSync';
-import { activityAPI } from '../services/api';
-import './OverviewTab.css';
+import React, { useState, useEffect } from "react";
+import Pet from "./Pet";
+import TimeLogger from "./TimeLogger";
+import GitHubSync from "./GitHubSync";
+import { activityAPI } from "../services/api";
+import "./OverviewTab.css";
 
 const OverviewTab = ({ pet, onActivityLogged }) => {
   const [todayStats, setTodayStats] = useState({
     commits: 0,
     codingTime: 0,
-    totalXP: 0
+    totalXP: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -19,14 +19,14 @@ const OverviewTab = ({ pet, onActivityLogged }) => {
       setIsLoading(true);
       const response = await activityAPI.getTodayStats();
       const stats = response.data;
-      
+
       setTodayStats({
         commits: stats.commits || 0,
         codingTime: stats.codingTime || 0,
-        totalXP: stats.totalXP || 0
+        totalXP: stats.totalXP || 0,
       });
     } catch (error) {
-      console.error('Error fetching today\'s stats:', error);
+      console.error("Error fetching today's stats:", error);
       // Keep existing values on error
     } finally {
       setIsLoading(false);
@@ -52,7 +52,7 @@ const OverviewTab = ({ pet, onActivityLogged }) => {
   const handleActivityLogged = async (activity) => {
     // Refresh today's stats when activity is logged
     await fetchTodayStats();
-    
+
     // Call the parent callback
     if (onActivityLogged) {
       onActivityLogged(activity);
@@ -62,7 +62,7 @@ const OverviewTab = ({ pet, onActivityLogged }) => {
   const handleGitHubSyncComplete = async (result) => {
     // Refresh today's stats when GitHub sync completes
     await fetchTodayStats();
-    
+
     // Call the parent callback
     if (onActivityLogged) {
       onActivityLogged(result);
@@ -70,13 +70,14 @@ const OverviewTab = ({ pet, onActivityLogged }) => {
   };
 
   return (
-    <div className="overview-tab">      {/* Top Section - Pet Display */}
+    <div className="overview-tab">
+      {" "}
+      {/* Top Section - Pet Display */}
       <div className="overview-header">
         <div className="pet-section">
-          <Pet pet={pet} compact={true} />
+          <Pet pet={pet} />
         </div>
       </div>
-
       {/* Bottom Section - Action Cards */}
       <div className="overview-content">
         {/* Quick Actions Card */}
@@ -85,10 +86,11 @@ const OverviewTab = ({ pet, onActivityLogged }) => {
             <span className="card-icon">⚡</span>
             Quick Actions
           </h3>
-            <div className="action-content">
+          <div className="action-content">
             <TimeLogger onActivityLogged={handleActivityLogged} />
           </div>
-        </div>        {/* Today's Progress Card */}
+        </div>{" "}
+        {/* Today's Progress Card */}
         <div className="quick-stats-card">
           <h3 className="card-title">
             <span className="card-icon">📊</span>
@@ -98,7 +100,7 @@ const OverviewTab = ({ pet, onActivityLogged }) => {
             <div className="stat-item">
               <div className="stat-content">
                 <div className="stat-value">
-                  {isLoading ? '...' : todayStats.commits}
+                  {isLoading ? "..." : todayStats.commits}
                 </div>
                 <div className="stat-label">Commits Today</div>
               </div>
@@ -107,15 +109,18 @@ const OverviewTab = ({ pet, onActivityLogged }) => {
             <div className="stat-item">
               <div className="stat-content">
                 <div className="stat-value">
-                  {isLoading ? '...' : formatCodingTime(todayStats.codingTime)}
+                  {isLoading ? "..." : formatCodingTime(todayStats.codingTime)}
                 </div>
                 <div className="stat-label">Coding Time</div>
               </div>
               <div className="stat-icon">⏱️</div>
-            </div>            <div className="stat-item">
+            </div>{" "}
+            <div className="stat-item">
               <div className="stat-content">
                 <div className="stat-value">
-                  {isLoading ? '...' : (todayStats.totalXP || (pet?.experience || 0))}
+                  {isLoading
+                    ? "..."
+                    : todayStats.totalXP || pet?.experience || 0}
                 </div>
                 <div className="stat-label">Total Experience</div>
               </div>
@@ -123,7 +128,7 @@ const OverviewTab = ({ pet, onActivityLogged }) => {
             </div>
           </div>
         </div>
-          {/* GitHub Sync Card */}
+        {/* GitHub Sync Card */}
         <div className="github-sync-card">
           <h3 className="card-title">
             <span className="card-icon">🔗</span>

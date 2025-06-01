@@ -72,17 +72,17 @@ const petSchema = new mongoose.Schema(
   }
 );
 
-// Experience thresholds for each stage
+// Experience thresholds for each stage - Made more challenging
 petSchema.statics.STAGE_THRESHOLDS = {
   egg: 0,
-  hatching: 50,
-  baby: 150,
-  juvenile: 350,
-  teen: 650,
-  young_adult: 1100,
-  adult: 1800,
-  elder: 2800,
-  legendary: 4500,
+  hatching: 200, // Was 50
+  baby: 600, // Was 150
+  juvenile: 1500, // Was 350
+  teen: 3000, // Was 650
+  young_adult: 5500, // Was 1100
+  adult: 9000, // Was 1800
+  elder: 15000, // Was 2800
+  legendary: 25000, // Was 4500
 };
 
 // Calculate pet stage based on experience

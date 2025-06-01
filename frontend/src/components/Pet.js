@@ -12,6 +12,36 @@ function Pet({ pet, compact = false }) {
       </div>
     );
   }
+
+  // Define thresholds consistently
+  const STAGE_THRESHOLDS = {
+    egg: 0,
+    hatching: 200,
+    baby: 600,
+    juvenile: 1500,
+    teen: 3000,
+    young_adult: 5500,
+    adult: 9000,
+    elder: 15000,
+    legendary: 25000,
+  };
+
+  // Calculate correct stage based on experience
+  const calculateCorrectStage = (experience) => {
+    if (experience >= STAGE_THRESHOLDS.legendary) return "legendary";
+    if (experience >= STAGE_THRESHOLDS.elder) return "elder";
+    if (experience >= STAGE_THRESHOLDS.adult) return "adult";
+    if (experience >= STAGE_THRESHOLDS.young_adult) return "young_adult";
+    if (experience >= STAGE_THRESHOLDS.teen) return "teen";
+    if (experience >= STAGE_THRESHOLDS.juvenile) return "juvenile";
+    if (experience >= STAGE_THRESHOLDS.baby) return "baby";
+    if (experience >= STAGE_THRESHOLDS.hatching) return "hatching";
+    return "egg";
+  };
+
+  // Use calculated stage instead of backend stage (which might be outdated)
+  const currentStage = calculateCorrectStage(pet.experience);
+
   const getPetEmoji = (stage) => {
     const emojis = {
       egg: "🥚",
@@ -30,19 +60,8 @@ function Pet({ pet, compact = false }) {
   const getProgressPercentage = (current, max) => {
     return Math.min((current / max) * 100, 100);
   };
-  const getNextThreshold = () => {
-    const thresholds = pet.stageThresholds || {
-      egg: 0,
-      hatching: 50,
-      baby: 150,
-      juvenile: 350,
-      teen: 650,
-      young_adult: 1100,
-      adult: 1800,
-      elder: 2800,
-      legendary: 4500,
-    };
 
+  const getNextThreshold = () => {
     const stages = [
       "egg",
       "hatching",
@@ -54,44 +73,31 @@ function Pet({ pet, compact = false }) {
       "elder",
       "legendary",
     ];
-    const currentIndex = stages.indexOf(pet.stage);
+    const currentIndex = stages.indexOf(currentStage);
     const nextStage = stages[currentIndex + 1];
 
-    return nextStage ? thresholds[nextStage] : thresholds.legendary;
+    return nextStage ? STAGE_THRESHOLDS[nextStage] : STAGE_THRESHOLDS.legendary;
   };
 
   const getStageStatus = (stage) => {
-    const thresholds = pet.stageThresholds || {
-      egg: 0,
-      hatching: 50,
-      baby: 150,
-      juvenile: 350,
-      teen: 650,
-      young_adult: 1100,
-      adult: 1800,
-      elder: 2800,
-      legendary: 4500,
-    };
-
-    if (pet.experience >= thresholds[stage]) {
-      return pet.stage === stage ? "current" : "completed";
-    }    return "locked";
-  };
-
-  // Compact version for OverviewTab
-  if (compact) {
-    return (
-      <div className="pet-container">
-        <div className="pet-display">
-          <span className="pet-emoji">{getPetEmoji(pet.stage)}</span>
-          <h2 className="pet-name">{pet.name || "My Pet"}</h2>
-          <p className="pet-stage">{pet.stage.replace("_", " ")} Stage</p>
-        </div>
-        <div className="experience-preview">
-          <div className="exp-label">Experience Progress</div>
-          <div className="exp-bar">
+    if (pet.experience >= STAGE_THRESHOLDS[stage]) {
+      return currentStage === stage ? "current" : "completed";
+    }
+    return "locked";
+  }; // Full version for OverviewTab and ProgressTab
+  return (
+    <div className="pet-container">
+      <div className="pet-display">
+        <span className="pet-emoji">{getPetEmoji(currentStage)}</span>
+        <h2 className="pet-name">{pet.name || "My Pet"}</h2>
+        <p className="pet-stage">{currentStage.replace("_", " ")} Stage</p>
+        <div className="pet-xp-display">
+          <div className="xp-info">
+            {pet.experience} / {getNextThreshold()} XP
+          </div>
+          <div className="progress-bar">
             <div
-              className="exp-fill"
+              className="progress-fill"
               style={{
                 width: `${getProgressPercentage(
                   pet.experience,
@@ -100,31 +106,17 @@ function Pet({ pet, compact = false }) {
               }}
             ></div>
           </div>
-          <div className="exp-text">
-            {pet.experience} / {getNextThreshold()} XP
-          </div>
         </div>
       </div>
-    );
-  }
-
-  // Full version for ProgressTab
-  return (
-    <div className="pet-container">
-      <div className="pet-display">
-        <span className="pet-emoji">{getPetEmoji(pet.stage)}</span>
-        <h2 className="pet-name">{pet.name || "My Pet"}</h2>
-        <p className="pet-stage">{pet.stage} Stage</p>
-      </div>{" "}
       <div className="pet-stats">
-        <div className="stat-card experience">
+        <div className="stat-card">
           <div className="stat-label">Experience</div>
           <div className="stat-value">
             {pet.experience} / {getNextThreshold()}
           </div>
           <div className="progress-bar">
             <div
-              className="progress-fill experience"
+              className="progress-fill"
               style={{
                 width: `${getProgressPercentage(
                   pet.experience,
@@ -134,7 +126,7 @@ function Pet({ pet, compact = false }) {
             ></div>
           </div>
         </div>
-      </div>{" "}
+      </div>
       <div className="growth-stages">
         <h3 className="growth-title">Growth Stages</h3>
         <div className="stages-container">
