@@ -13,19 +13,18 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     // Check for existing auth token on app load
-    const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('userData');
+    const token = localStorage.getItem('codepets_token');
+    const userData = localStorage.getItem('codepets_user');
     
     if (token && userData) {
       try {
         setUser(JSON.parse(userData));
       } catch (error) {
         console.error('Error parsing user data:', error);
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('userData');
+        localStorage.removeItem('codepets_token');
+        localStorage.removeItem('codepets_user');
       }
     }
     setIsLoading(false);
@@ -43,12 +42,10 @@ export const AuthProvider = ({ children }) => {
 
       if (!response.ok) {
         throw new Error('GitHub authentication failed');
-      }
-
-      const data = await response.json();
+      }      const data = await response.json();
       
-      localStorage.setItem('authToken', data.token);
-      localStorage.setItem('userData', JSON.stringify(data.user));
+      localStorage.setItem('codepets_token', data.token);
+      localStorage.setItem('codepets_user', JSON.stringify(data.user));
       setUser(data.user);
       
       return data;
@@ -66,10 +63,9 @@ export const AuthProvider = ({ children }) => {
     
     window.location.href = githubAuthUrl;
   };
-
   const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
+    localStorage.removeItem('codepets_token');
+    localStorage.removeItem('codepets_user');
     setUser(null);
   };
 

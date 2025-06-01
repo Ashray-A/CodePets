@@ -12,7 +12,8 @@ const OverviewTab = ({ pet, onActivityLogged }) => {
     totalXP: 0
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);  // Fetch today's statistics from the backend
+
+  // Fetch today's statistics from the backend
   const fetchTodayStats = async () => {
     try {
       setIsLoading(true);
@@ -69,11 +70,10 @@ const OverviewTab = ({ pet, onActivityLogged }) => {
   };
 
   return (
-    <div className="overview-tab">
-      {/* Top Section - Pet Display */}
+    <div className="overview-tab">      {/* Top Section - Pet Display */}
       <div className="overview-header">
         <div className="pet-section">
-          <Pet pet={pet} />
+          <Pet pet={pet} compact={true} />
         </div>
       </div>
 

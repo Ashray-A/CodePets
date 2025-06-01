@@ -1,7 +1,7 @@
 import React from "react";
 import "./Pet.css";
 
-function Pet({ pet }) {
+function Pet({ pet, compact = false }) {
   if (!pet) {
     return (
       <div className="pet-container">
@@ -75,10 +75,40 @@ function Pet({ pet }) {
 
     if (pet.experience >= thresholds[stage]) {
       return pet.stage === stage ? "current" : "completed";
-    }
-    return "locked";
+    }    return "locked";
   };
 
+  // Compact version for OverviewTab
+  if (compact) {
+    return (
+      <div className="pet-container">
+        <div className="pet-display">
+          <span className="pet-emoji">{getPetEmoji(pet.stage)}</span>
+          <h2 className="pet-name">{pet.name || "My Pet"}</h2>
+          <p className="pet-stage">{pet.stage.replace("_", " ")} Stage</p>
+        </div>
+        <div className="experience-preview">
+          <div className="exp-label">Experience Progress</div>
+          <div className="exp-bar">
+            <div
+              className="exp-fill"
+              style={{
+                width: `${getProgressPercentage(
+                  pet.experience,
+                  getNextThreshold()
+                )}%`,
+              }}
+            ></div>
+          </div>
+          <div className="exp-text">
+            {pet.experience} / {getNextThreshold()} XP
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Full version for ProgressTab
   return (
     <div className="pet-container">
       <div className="pet-display">
