@@ -77,7 +77,8 @@ router.post("/log-time", authenticateToken, async (req, res) => {
         progress: pet.getProgressToNextLevel(),
       },
       pointsEarned: timeLog.points,
-    });  } catch (error) {
+    });
+  } catch (error) {
     console.error("Log time error:", error);
     res.status(500).json({
       success: false,
@@ -107,11 +108,12 @@ router.get("/history", authenticateToken, async (req, res) => {
     // Calculate weekly stats
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
-    
+
     const thisWeekLogs = await TimeLog.find({
       userId: req.user._id,
-      date: { $gte: weekAgo }
-    }).lean();    const thisWeekHours = thisWeekLogs.reduce((sum, log) => sum + log.hours, 0);
+      date: { $gte: weekAgo },
+    }).lean();
+    const thisWeekHours = thisWeekLogs.reduce((sum, log) => sum + log.hours, 0);
 
     // Get recent commit sync history (last 10)
     const commitHistory = await CommitSync.find({ userId: req.user._id })
@@ -131,11 +133,11 @@ router.get("/history", authenticateToken, async (req, res) => {
         lastActivity: pet.lastActivity,
         thisWeek: {
           hours: Math.round(thisWeekHours * 10) / 10,
-          commits: 0 // We don't track weekly commits separately
-        }
+          commits: 0, // We don't track weekly commits separately
+        },
       },
       timeLogs: timeLogs,
-      commitHistory: commitHistory
+      commitHistory: commitHistory,
     };
 
     res.json({
@@ -158,8 +160,8 @@ router.get("/test-auth", authenticateToken, async (req, res) => {
     message: "Authentication working",
     user: {
       id: req.user._id,
-      username: req.user.username
-    }
+      username: req.user.username,
+    },
   });
 });
 

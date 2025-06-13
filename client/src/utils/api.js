@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
 
 // Create axios instance with base configuration
 const api = axios.create({
@@ -25,20 +26,22 @@ api.interceptors.response.use(
   (error) => {
     // Only auto-logout for specific authentication failures, not all 401s
     if (error.response?.status === 401) {
-      const message = error.response?.data?.message || '';
-      
+      const message = error.response?.data?.message || "";
+
       // Only auto-logout for token-related errors, not GitHub API issues
-      if (message.includes('Invalid token') || 
-          message.includes('Token expired') || 
-          message.includes('Access token required') ||
-          message.includes('user not found')) {
-        console.log('🚪 Auto-logout: Token is invalid, clearing auth data');
+      if (
+        message.includes("Invalid token") ||
+        message.includes("Token expired") ||
+        message.includes("Access token required") ||
+        message.includes("user not found")
+      ) {
+        console.log("🚪 Auto-logout: Token is invalid, clearing auth data");
         localStorage.removeItem("codepets_token");
         localStorage.removeItem("codepets_user");
         window.location.href = "/";
       } else {
         // For other 401s (like GitHub API issues), just log the error
-        console.log('⚠️ 401 Error (not auto-logging out):', message);
+        console.log("⚠️ 401 Error (not auto-logging out):", message);
       }
     }
     return Promise.reject(error);

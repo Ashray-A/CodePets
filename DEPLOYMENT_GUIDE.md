@@ -3,6 +3,7 @@
 ## 🚀 Easy Deployment with Vercel + Render
 
 ### Prerequisites
+
 - GitHub account
 - Vercel account (free)
 - Render account (free)
@@ -13,12 +14,14 @@
 ## 📋 Deployment Steps
 
 ### **Step 1: Database Setup (MongoDB Atlas)**
+
 1. Go to [MongoDB Atlas](https://www.mongodb.com/atlas)
 2. Create a free cluster if you haven't already
 3. Get your connection string from the Connect button
 4. Make sure to whitelist all IPs (0.0.0.0/0) for production or specific Render IPs
 
 ### **Step 2: GitHub OAuth App Setup**
+
 1. Go to GitHub Settings → Developer settings → OAuth Apps
 2. Click "New OAuth App"
 3. Fill in:
@@ -28,6 +31,7 @@
 4. Save the Client ID and Client Secret
 
 ### **Step 3: Deploy Backend to Render**
+
 1. Go to [Render](https://render.com) and sign up
 2. Click "New +" → "Web Service"
 3. Connect your GitHub repository
@@ -47,6 +51,7 @@
 9. Note your backend URL: `https://your-service.onrender.com`
 
 ### **Step 4: Deploy Frontend to Vercel**
+
 1. Go to [Vercel](https://vercel.com) and sign up with GitHub
 2. Click "New Project"
 3. Import your GitHub repository
@@ -60,11 +65,13 @@
 8. Note your frontend URL: `https://your-app.vercel.app`
 
 ### **Step 5: Update GitHub OAuth URLs**
+
 1. Go back to your GitHub OAuth App settings
 2. Update the callback URL to: `https://your-app.vercel.app/auth/callback`
 3. Update homepage URL to: `https://your-app.vercel.app`
 
 ### **Step 6: Update Backend Environment**
+
 1. Go to your Render dashboard
 2. Update the `CLIENT_URL` environment variable to: `https://your-app.vercel.app`
 3. Redeploy the service
@@ -74,6 +81,7 @@
 ## 🔧 Environment Variables Reference
 
 ### Backend (.env)
+
 ```bash
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/codepets
 GITHUB_CLIENT_ID=your_github_client_id
@@ -84,6 +92,7 @@ NODE_ENV=production
 ```
 
 ### Frontend (.env)
+
 ```bash
 VITE_API_BASE_URL=https://your-backend.onrender.com/api
 ```
@@ -105,18 +114,22 @@ VITE_API_BASE_URL=https://your-backend.onrender.com/api
 ### Common Issues:
 
 **1. OAuth Callback Error**
+
 - Make sure GitHub OAuth callback URL matches exactly
 - Check for trailing slashes
 
 **2. API Connection Error**
+
 - Verify VITE_API_BASE_URL in Vercel environment variables
 - Check CORS settings in backend
 
 **3. Database Connection Issues**
+
 - Verify MongoDB Atlas connection string
 - Check IP whitelist settings
 
 **4. GitHub API Errors**
+
 - Verify GitHub OAuth credentials
 - Check GitHub API rate limits
 

@@ -86,12 +86,15 @@ router.post("/sync-commits", authenticateToken, async (req, res) => {
         visibility: "public",
         per_page: 100,
       },
-    });    let totalNewCommits = 0;
+    });
+    let totalNewCommits = 0;
     const since = user.lastSynced
       ? user.lastSynced.toISOString()
       : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(); // Last 30 days if never synced
 
-    console.log(`🔍 Sync: Checking commits since ${since} for user ${user.username}`);
+    console.log(
+      `🔍 Sync: Checking commits since ${since} for user ${user.username}`
+    );
     console.log(`👤 Sync: User email: ${user.email}`);
     console.log(`📦 Sync: Found ${reposResponse.data.length} repositories`);
 
@@ -99,7 +102,7 @@ router.post("/sync-commits", authenticateToken, async (req, res) => {
     for (const repo of reposResponse.data) {
       try {
         console.log(`🔄 Sync: Checking repo ${repo.full_name}...`);
-        
+
         const commitsResponse = await axios.get(
           `https://api.github.com/repos/${repo.full_name}/commits`,
           {
@@ -115,8 +118,11 @@ router.post("/sync-commits", authenticateToken, async (req, res) => {
           }
         );
 
-        console.log(`📊 Sync: ${repo.full_name} - ${commitsResponse.data.length} commits found`);
-        totalNewCommits += commitsResponse.data.length;} catch (repoError) {
+        console.log(
+          `📊 Sync: ${repo.full_name} - ${commitsResponse.data.length} commits found`
+        );
+        totalNewCommits += commitsResponse.data.length;
+      } catch (repoError) {
         // Skip repos that we can't access (403/404)
         if (
           repoError.response?.status !== 403 &&
@@ -128,7 +134,9 @@ router.post("/sync-commits", authenticateToken, async (req, res) => {
             repoError.message
           );
         } else {
-          console.log(`⚠️ Sync: Skipping ${repo.full_name} (${repoError.response?.status})`);
+          console.log(
+            `⚠️ Sync: Skipping ${repo.full_name} (${repoError.response?.status})`
+          );
         }
       }
     }
@@ -142,12 +150,12 @@ router.post("/sync-commits", authenticateToken, async (req, res) => {
         userId: user._id,
         name: `${user.username}'s Coding Cat`,
       });
-    }    // Add new commit points
+    } // Add new commit points
     const newCommitPoints = totalNewCommits * 0.5; // 0.5 points per commit
     pet.commitPoints += newCommitPoints;
     pet.totalCommits += totalNewCommits;
     pet.updatePoints();
-    await pet.save();    // Record sync event if there were new commits
+    await pet.save(); // Record sync event if there were new commits
     if (totalNewCommits > 0) {
       const commitSync = new CommitSync({
         userId: user._id,
@@ -155,7 +163,9 @@ router.post("/sync-commits", authenticateToken, async (req, res) => {
         pointsEarned: newCommitPoints,
       });
       await commitSync.save();
-      console.log(`💾 Sync: Recorded sync event - ${totalNewCommits} commits, ${newCommitPoints} points`);
+      console.log(
+        `💾 Sync: Recorded sync event - ${totalNewCommits} commits, ${newCommitPoints} points`
+      );
     } else {
       console.log(`📝 Sync: No new commits found, no sync event recorded`);
     }
@@ -164,7 +174,9 @@ router.post("/sync-commits", authenticateToken, async (req, res) => {
     user.lastSynced = new Date();
     await user.save();
 
-    console.log(`✅ Sync: Complete for ${user.username} - ${totalNewCommits} commits, ${newCommitPoints} points`);
+    console.log(
+      `✅ Sync: Complete for ${user.username} - ${totalNewCommits} commits, ${newCommitPoints} points`
+    );
 
     res.json({
       success: true,
@@ -272,25 +284,25 @@ router.get("/sync-debug", authenticateToken, async (req, res) => {
         username: user.username,
         email: user.email,
         lastSynced: user.lastSynced,
-        since: since
+        since: since,
       },
-      repos: reposResponse.data.map(repo => ({
+      repos: reposResponse.data.map((repo) => ({
         name: repo.full_name,
         visibility: repo.visibility,
-        defaultBranch: repo.default_branch
-      }))
+        defaultBranch: repo.default_branch,
+      })),
     };
 
     res.json({
       success: true,
-      debug: debugInfo
+      debug: debugInfo,
     });
   } catch (error) {
     console.error("GitHub sync debug error:", error);
     res.status(500).json({
       success: false,
       message: "Failed to get sync debug info",
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -326,10 +338,10 @@ router.get("/debug-sync", authenticateToken, async (req, res) => {
       user: {
         username: user.username,
         email: user.email,
-        lastSynced: user.lastSynced
+        lastSynced: user.lastSynced,
       },
       since: since,
-      repos: []
+      repos: [],
     };
 
     // Check first few repos
@@ -353,31 +365,31 @@ router.get("/debug-sync", authenticateToken, async (req, res) => {
         debugInfo.repos.push({
           name: repo.full_name,
           commits: commitsResponse.data.length,
-          commitDetails: commitsResponse.data.map(c => ({
+          commitDetails: commitsResponse.data.map((c) => ({
             sha: c.sha.substring(0, 7),
             message: c.commit.message.substring(0, 50),
             date: c.commit.author.date,
-            author: c.commit.author.name
-          }))
+            author: c.commit.author.name,
+          })),
         });
       } catch (error) {
         debugInfo.repos.push({
           name: repo.full_name,
-          error: error.response?.status || error.message
+          error: error.response?.status || error.message,
         });
       }
     }
 
     res.json({
       success: true,
-      debug: debugInfo
+      debug: debugInfo,
     });
   } catch (error) {
     console.error("Debug sync error:", error);
     res.status(500).json({
       success: false,
       message: "Failed to get sync debug info",
-      error: error.message
+      error: error.message,
     });
   }
 });
