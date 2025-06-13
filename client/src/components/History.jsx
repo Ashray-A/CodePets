@@ -25,17 +25,24 @@ const History = () => {
         const response = await petAPI.getHistory();
       console.log('History response:', response);
       // Extract the actual data from the response
-      setHistoryData(response.data.data);
-    } catch (error) {
+      setHistoryData(response.data.data);    } catch (error) {
       console.error('History fetch error:', error);
       
       // Handle different types of errors
-      if (error.response?.status === 401 || error.message.includes("Invalid token")) {
-        setError("Authentication failed. Please login again.");
-        // Clear invalid token and redirect to login
-        setTimeout(() => {
-          clearAuthAndRedirect();
-        }, 2000);
+      if (error.response?.status === 401) {
+        const message = error.response?.data?.message || '';
+        
+        // Only redirect for actual token issues, not GitHub API problems
+        if (message.includes('Invalid token') || 
+            message.includes('Token expired') || 
+            message.includes('Access token required')) {
+          setError("Your session has expired. Please login again.");
+          setTimeout(() => {
+            clearAuthAndRedirect();
+          }, 3000);
+        } else {
+          setError("Authentication issue with GitHub. Please try again or re-login if the problem persists.");
+        }
       } else {
         setError(`Failed to load history: ${error.response?.data?.message || error.message}`);
       }

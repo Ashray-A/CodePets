@@ -23,10 +23,23 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // Only auto-logout for specific authentication failures, not all 401s
     if (error.response?.status === 401) {
-      localStorage.removeItem("codepets_token");
-      localStorage.removeItem("codepets_user");
-      window.location.href = "/";
+      const message = error.response?.data?.message || '';
+      
+      // Only auto-logout for token-related errors, not GitHub API issues
+      if (message.includes('Invalid token') || 
+          message.includes('Token expired') || 
+          message.includes('Access token required') ||
+          message.includes('user not found')) {
+        console.log('🚪 Auto-logout: Token is invalid, clearing auth data');
+        localStorage.removeItem("codepets_token");
+        localStorage.removeItem("codepets_user");
+        window.location.href = "/";
+      } else {
+        // For other 401s (like GitHub API issues), just log the error
+        console.log('⚠️ 401 Error (not auto-logging out):', message);
+      }
     }
     return Promise.reject(error);
   }
