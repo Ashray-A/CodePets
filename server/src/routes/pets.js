@@ -2,6 +2,7 @@ import express from "express";
 import { authenticateToken } from "../middleware/auth.js";
 import Pet from "../models/Pet.js";
 import TimeLog from "../models/TimeLog.js";
+import CommitSync from "../models/CommitSync.js";
 
 const router = express.Router();
 
@@ -110,19 +111,13 @@ router.get("/history", authenticateToken, async (req, res) => {
     const thisWeekLogs = await TimeLog.find({
       userId: req.user._id,
       date: { $gte: weekAgo }
-    }).lean();
+    }).lean();    const thisWeekHours = thisWeekLogs.reduce((sum, log) => sum + log.hours, 0);
 
-    const thisWeekHours = thisWeekLogs.reduce((sum, log) => sum + log.hours, 0);
-
-    // Create mock commit history (since we don't store individual syncs)
-    const commitHistory = [];
-    if (pet.totalCommits > 0) {
-      commitHistory.push({
-        date: pet.lastActivity,
-        newCommits: pet.totalCommits,
-        pointsEarned: pet.commitPoints
-      });
-    }
+    // Get recent commit sync history (last 10)
+    const commitHistory = await CommitSync.find({ userId: req.user._id })
+      .sort({ date: -1 })
+      .limit(10)
+      .lean();
 
     const historyData = {
       stats: {

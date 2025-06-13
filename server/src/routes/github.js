@@ -3,6 +3,7 @@ import axios from "axios";
 import { authenticateToken } from "../middleware/auth.js";
 import User from "../models/User.js";
 import Pet from "../models/Pet.js";
+import CommitSync from "../models/CommitSync.js";
 
 const router = express.Router();
 
@@ -132,14 +133,22 @@ router.post("/sync-commits", authenticateToken, async (req, res) => {
         userId: user._id,
         name: `${user.username}'s Coding Cat`,
       });
-    }
-
-    // Add new commit points
+    }    // Add new commit points
     const newCommitPoints = totalNewCommits * 0.5; // 0.5 points per commit
     pet.commitPoints += newCommitPoints;
     pet.totalCommits += totalNewCommits;
     pet.updatePoints();
     await pet.save();
+
+    // Record sync event if there were new commits
+    if (totalNewCommits > 0) {
+      const commitSync = new CommitSync({
+        userId: user._id,
+        newCommits: totalNewCommits,
+        pointsEarned: newCommitPoints,
+      });
+      await commitSync.save();
+    }
 
     // Update user's last sync time
     user.lastSynced = new Date();
