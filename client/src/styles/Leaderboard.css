@@ -1,0 +1,224 @@
+/* Leaderboard Component Styles */
+
+.leaderboard-content {
+  width: 100%;
+}
+
+.leaderboard-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.leaderboard-header h2 {
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.leaderboard-header p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.leaderboard-table {
+  overflow-x: auto;
+  background: var(--card-bg);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow);
+}
+
+.leaderboard-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.leaderboard-table th {
+  background: var(--bg-secondary);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 2px solid var(--border-color);
+  font-size: 0.85rem;
+}
+
+.leaderboard-table th:first-child {
+  text-align: center;
+}
+
+.leaderboard-table th:nth-child(4),
+.leaderboard-table th:nth-child(5),
+.leaderboard-table th:nth-child(6) {
+  text-align: center;
+}
+
+.leaderboard-table td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+  font-size: 0.85rem;
+}
+
+.leaderboard-table tr:last-child td {
+  border-bottom: none;
+}
+
+.leaderboard-table tbody tr:hover {
+  background-color: var(--bg-secondary);
+  cursor: pointer;
+}
+
+/* Rank Styling */
+.leaderboard-table tr.rank-1 {
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
+}
+
+.leaderboard-table tr.rank-1:hover {
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), var(--bg-secondary));
+}
+
+.leaderboard-table tr.rank-2 {
+  background: linear-gradient(90deg, rgba(192, 192, 192, 0.1), transparent);
+}
+
+.leaderboard-table tr.rank-2:hover {
+  background: linear-gradient(90deg, rgba(192, 192, 192, 0.2), var(--bg-secondary));
+}
+
+.leaderboard-table tr.rank-3 {
+  background: linear-gradient(90deg, rgba(205, 127, 50, 0.1), transparent);
+}
+
+.leaderboard-table tr.rank-3:hover {
+  background: linear-gradient(90deg, rgba(205, 127, 50, 0.2), var(--bg-secondary));
+}
+
+/* Cell Specific Styles */
+.rank-cell {
+  text-align: center;
+  font-weight: bold;
+  min-width: 80px;
+  width: 80px;
+}
+
+.rank-number {
+  font-size: 1.1rem;
+  display: inline-block;
+  line-height: 1;
+}
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 150px;
+}
+
+.user-avatar-small {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+}
+
+.username {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.pet-cell {
+  text-align: left;
+  min-width: 150px;
+}
+
+.pet-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pet-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pet-emoji {
+  font-size: 1.1em;
+}
+
+.pet-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+}
+
+.pet-level {
+  color: var(--text-secondary);
+  font-size: 0.7rem;
+}
+
+.points-cell {
+  text-align: center;
+  font-weight: 600;
+  color: var(--accent-color);
+  min-width: 80px;
+}
+
+.commits-cell, .hours-cell {
+  text-align: center;
+  color: var(--text-secondary);
+  min-width: 70px;
+}
+
+/* Loading and Error States */
+.leaderboard-loading, .leaderboard-error {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+.leaderboard-error {
+  color: var(--error-color);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .leaderboard-table {
+    font-size: 0.8rem;
+  }
+  
+  .leaderboard-table th,
+  .leaderboard-table td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.75rem;
+  }
+  
+  .user-avatar-small {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .pet-emoji {
+    font-size: 1rem;
+  }
+  
+  .rank-number {
+    font-size: 1rem;
+  }
+  
+  .username {
+    font-size: 0.75rem;
+  }
+  
+  .pet-name {
+    font-size: 0.7rem;
+  }
+  
+  .pet-level {
+    display: none;
+  }
+}

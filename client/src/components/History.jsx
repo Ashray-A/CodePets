@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { petAPI } from '../utils/api';
+import '../styles/History.css';
 
 const History = () => {
   const [historyData, setHistoryData] = useState(null);

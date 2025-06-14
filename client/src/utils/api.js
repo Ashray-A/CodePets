@@ -72,6 +72,7 @@ export const githubAPI = {
 // User API calls
 export const userAPI = {
   getProfile: () => api.get("/users/profile"),
+  getLeaderboard: () => api.get("/users/leaderboard"),
 };
 
 export default api;

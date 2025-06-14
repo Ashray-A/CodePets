@@ -1,0 +1,134 @@
+/* History Component Styles */
+
+.history-content {
+  width: 100%;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.history-header h2 {
+  color: var(--primary-color);
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.refresh-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.refresh-btn:hover {
+  background: var(--secondary-color);
+}
+
+.refresh-btn:disabled {
+  background: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.history-item {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: background-color 0.3s ease;
+}
+
+.history-item:hover {
+  background: var(--bg-tertiary);
+}
+
+.history-item-content {
+  flex: 1;
+}
+
+.history-item-type {
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.history-item-description {
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.history-item-details {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.history-item-points {
+  font-weight: 600;
+  color: var(--accent-color);
+  font-size: 1rem;
+  text-align: right;
+  min-width: 60px;
+}
+
+.history-loading {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+}
+
+.history-error {
+  text-align: center;
+  padding: 2rem;
+  color: var(--error-color);
+}
+
+.no-history {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .history-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  
+  .history-item {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .history-item-details {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .history-item-points {
+    text-align: left;
+    min-width: auto;
+  }
+}

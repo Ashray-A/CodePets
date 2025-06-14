@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { petAPI } from '../utils/api';
+import '../styles/PetDisplay.css';
 
 const PetDisplay = () => {
   const [pet, setPet] = useState(null);

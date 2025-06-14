@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth.jsx';
 import PetDisplay from '../components/PetDisplay.jsx';
 import History from '../components/History.jsx';
+import Leaderboard from '../components/Leaderboard.jsx';
 import { githubAPI, petAPI } from '../utils/api';
+import '../styles/DashboardPage.css';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
@@ -97,6 +99,12 @@ const DashboardPage = () => {
           >
             📊 History
           </button>
+          <button 
+            className={`tab-button ${activeTab === 'leaderboard' ? 'active' : ''}`}
+            onClick={() => handleTabChange('leaderboard')}
+          >
+            🏆 Leaderboard
+          </button>
         </div>{activeTab === 'pet' && (
           <div className="pet-tab-content">
             <section className="pet-section">
@@ -163,9 +171,15 @@ const DashboardPage = () => {
               </div>
             </section>
           </div>
-        )}{activeTab === 'history' && (
+        )}        {activeTab === 'history' && (
           <div className="history-tab-section">
             <History />
+          </div>
+        )}
+
+        {activeTab === 'leaderboard' && (
+          <div className="leaderboard-tab-section">
+            <Leaderboard />
           </div>
         )}
       </main>
