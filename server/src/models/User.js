@@ -30,6 +30,19 @@ const userSchema = new mongoose.Schema(
       type: Date,
       // No default - null for new users who haven't synced yet
     },
+    // Streak tracking
+    currentStreak: {
+      type: Number,
+      default: 0,
+    },
+    longestStreak: {
+      type: Number,
+      default: 0,
+    },
+    lastActivityDate: {
+      type: Date,
+      // Last date when user had coding activity (commits or time logs)
+    },
   },
   {
     timestamps: true,

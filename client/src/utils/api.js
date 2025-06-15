@@ -78,4 +78,11 @@ export const userAPI = {
   getLeaderboard: () => api.get("/users/leaderboard"),
 };
 
+// Streaks API calls
+export const streaksAPI = {
+  getStreak: () => api.get("/streaks"),
+  getLeaderboard: (limit = 50) =>
+    api.get(`/streaks/leaderboard?limit=${limit}`),
+};
+
 export default api;

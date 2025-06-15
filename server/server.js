@@ -9,6 +9,7 @@ import authRoutes from "./src/routes/auth.js";
 import userRoutes from "./src/routes/users.js";
 import petRoutes from "./src/routes/pets.js";
 import githubRoutes from "./src/routes/github.js";
+import streaksRoutes from "./src/routes/streaks.js";
 
 dotenv.config();
 
@@ -40,6 +41,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/pets", petRoutes);
 app.use("/api/github", githubRoutes);
+app.use("/api/streaks", streaksRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

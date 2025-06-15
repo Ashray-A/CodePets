@@ -4,6 +4,7 @@ import { useAuth } from '../hooks/useAuth.jsx';
 import PetDisplay from '../components/PetDisplay.jsx';
 import History from '../components/History.jsx';
 import Leaderboard from '../components/Leaderboard.jsx';
+import Streaks from '../components/Streaks.jsx';
 import { githubAPI, petAPI } from '../utils/api';
 import '../styles/pages/DashboardPage.css';
 
@@ -36,13 +37,16 @@ const DashboardPage = () => {
     try {
       setSyncing(true);
       setMessage(null);
-      
-      const response = await githubAPI.syncCommits();
+        const response = await githubAPI.syncCommits();
       setMessage({
         type: 'success',
         text: `Synced ${response.data.newCommits} new commits! Earned ${response.data.pointsEarned} points.`
       });
-        // Refresh pet display
+      
+      // Trigger streak refresh
+      window.dispatchEvent(new CustomEvent('streakUpdate'));
+      
+      // Refresh pet display
       window.location.reload();
     } catch (err) {
       console.error('Sync error:', err);
@@ -65,14 +69,16 @@ const DashboardPage = () => {
 
     try {
       setLoggingTime(true);
-      setMessage(null);
-
-      const response = await petAPI.logTime(parseFloat(timeForm.hours), timeForm.description);
+      setMessage(null);      const response = await petAPI.logTime(parseFloat(timeForm.hours), timeForm.description);
       setMessage({
         type: 'success',
         text: `Logged ${timeForm.hours} hours! Earned ${response.data.pointsEarned} points.`
       });
-        setTimeForm({ hours: '', description: '' });
+      setTimeForm({ hours: '', description: '' });
+      
+      // Trigger streak refresh
+      window.dispatchEvent(new CustomEvent('streakUpdate'));
+      
       // Refresh pet display
       window.location.reload();
     } catch (err) {
@@ -114,6 +120,12 @@ const DashboardPage = () => {
             onClick={() => handleTabChange('leaderboard')}
           >
             🏆 Leaderboard
+          </button>
+          <button 
+            className={`tab-button ${activeTab === 'streaks' ? 'active' : ''}`}
+            onClick={() => handleTabChange('streaks')}
+          >
+            🔥 Streaks
           </button>
         </div>{activeTab === 'pet' && (
           <div className="pet-tab-content">
@@ -182,11 +194,15 @@ const DashboardPage = () => {
           <div className="history-tab-section">
             <History />
           </div>
-        )}
-
-        {activeTab === 'leaderboard' && (
+        )}        {activeTab === 'leaderboard' && (
           <div className="leaderboard-tab-section">
             <Leaderboard />
+          </div>
+        )}
+
+        {activeTab === 'streaks' && (
+          <div className="streaks-tab-section">
+            <Streaks />
           </div>
         )}
       </main>

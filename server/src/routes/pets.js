@@ -3,6 +3,7 @@ import { authenticateToken } from "../middleware/auth.js";
 import Pet from "../models/Pet.js";
 import TimeLog from "../models/TimeLog.js";
 import CommitSync from "../models/CommitSync.js";
+import { updateUserStreak } from "../utils/streaks.js";
 
 const router = express.Router();
 
@@ -45,15 +46,22 @@ router.post("/log-time", authenticateToken, async (req, res) => {
         success: false,
         message: "Hours must be between 0.1 and 24",
       });
-    }
-
-    // Create time log
+    } // Create time log
     const timeLog = new TimeLog({
       userId: req.user._id,
       hours: parseFloat(hours),
       description: description || "",
     });
     await timeLog.save();
+
+    console.log(`⏰ Time logged: ${hours} hours for user ${req.user.username}`);
+
+    // Update user streak for coding activity
+    console.log(`🔥 Updating streak for user ${req.user.username}...`);
+    const updatedUser = await updateUserStreak(req.user._id);
+    console.log(
+      `🔥 Streak after update: current=${updatedUser.currentStreak}, longest=${updatedUser.longestStreak}`
+    );
 
     // Update pet
     let pet = await Pet.findOne({ userId: req.user._id });

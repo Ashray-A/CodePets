@@ -4,6 +4,7 @@ import { authenticateTokenWithGitHub } from "../middleware/auth.js";
 import User from "../models/User.js";
 import Pet from "../models/Pet.js";
 import CommitSync from "../models/CommitSync.js";
+import { updateUserStreak } from "../utils/streaks.js";
 
 const router = express.Router();
 
@@ -150,10 +151,11 @@ router.post("/sync-commits", authenticateTokenWithGitHub, async (req, res) => {
         }
       }
     }
-    console.log(`🎯 Total new commits found: ${totalNewCommits}`);
-
-    // Only update pet and record sync if there are actually new commits
+    console.log(`🎯 Total new commits found: ${totalNewCommits}`); // Only update pet and record sync if there are actually new commits
     if (totalNewCommits > 0) {
+      // Update user streak for coding activity
+      await updateUserStreak(user._id);
+
       // Update or create pet
       let pet = await Pet.findOne({ userId: user._id });
       if (!pet) {
