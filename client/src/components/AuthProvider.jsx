@@ -2,7 +2,21 @@ import { useState, useEffect } from 'react';
 import { AuthContext } from '../contexts/AuthContext.jsx';
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    // Initialize user from localStorage if available
+    try {
+      const userData = localStorage.getItem('codepets_user');
+      const token = localStorage.getItem('codepets_token');
+      if (userData && token) {
+        return JSON.parse(userData);
+      }
+    } catch (error) {
+      console.error('Error parsing stored user data:', error);
+      localStorage.removeItem('codepets_user');
+      localStorage.removeItem('codepets_token');
+    }
+    return null;
+  });
   const [loading, setLoading] = useState(true);
   const [authLoading, setAuthLoading] = useState(false);
 
@@ -19,7 +33,11 @@ export const AuthProvider = ({ children }) => {
 
       try {
         // Validate token with server by making an authenticated request
-        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+          (import.meta.env.PROD ? "https://codepets-server.onrender.com/api" : "http://localhost:5000/api");
+        
+        console.log('🔍 Auth: Validating token with API:', API_BASE_URL);
+        
         const response = await fetch(`${API_BASE_URL}/users/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -53,6 +71,25 @@ export const AuthProvider = ({ children }) => {
     validateAuthToken();
   }, []);
 
+  // Handle page visibility changes to refresh auth state
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && user) {
+        // Page became visible and user is logged in, validate token
+        const token = localStorage.getItem('codepets_token');
+        if (!token) {
+          // Token was removed while page was hidden
+          setUser(null);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [user]);
+
   const login = async (token, userData) => {
     setAuthLoading(true);
     try {
@@ -74,9 +111,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('codepets_token');
     localStorage.removeItem('codepets_user');
     setUser(null);
+    setAuthLoading(false);
     
-    // Force redirect to login page to ensure clean state
-    window.location.href = '/login';
+    // Use React Router navigation instead of window.location
+    // The component using this should handle navigation
   };
 
   const clearAuth = () => {

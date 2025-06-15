@@ -66,7 +66,7 @@ const LoginPage = () => {
             throw new Error('Invalid response: missing token or user data');
           }
           login(token, user);
-          navigate('/dashboard');
+          navigate('/dashboard', { replace: true });
         } catch (err) {
           oauthProcessingRef.current = false;
           let errorMessage = 'Authentication failed. Please try again.';

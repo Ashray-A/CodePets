@@ -12,7 +12,7 @@ const ProtectedRoute = ({ children }) => {
     return <div className="loading-screen">Loading... 🐱</div>;
   }
   
-  return isAuthenticated ? children : <Navigate to="/login" />;
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
 const PublicRoute = ({ children }) => {
@@ -22,7 +22,7 @@ const PublicRoute = ({ children }) => {
     return <div className="loading-screen">Loading... 🐱</div>;
   }
   
-  return isAuthenticated ? <Navigate to="/dashboard" /> : children;
+  return isAuthenticated ? <Navigate to="/dashboard" replace /> : children;
 };
 
 function App() {
@@ -41,7 +41,7 @@ function App() {
               <DashboardPage />
             </ProtectedRoute>
           } />
-          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </AuthProvider>

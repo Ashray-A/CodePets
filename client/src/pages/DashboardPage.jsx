@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.jsx';
 import PetDisplay from '../components/PetDisplay.jsx';
 import History from '../components/History.jsx';
@@ -8,6 +9,7 @@ import '../styles/pages/DashboardPage.css';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [syncing, setSyncing] = useState(false);
   const [loggingTime, setLoggingTime] = useState(false);
   const [timeForm, setTimeForm] = useState({ hours: '', description: '' });
@@ -16,6 +18,12 @@ const DashboardPage = () => {
     // Remember the last active tab
     return localStorage.getItem('codepets_active_tab') || 'pet';
   });
+  // Handle logout with navigation
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
+
   // Save active tab to localStorage when it changes
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -83,7 +91,7 @@ const DashboardPage = () => {
         <div className="user-info">
           <img src={user.avatarUrl} alt={user.username} className="user-avatar" />
           <span className="username">{user.username}</span>
-          <button onClick={logout} className="logout-btn">
+          <button onClick={handleLogout} className="logout-btn">
             <span>🚪</span>
             Logout
           </button>
