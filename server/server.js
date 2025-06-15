@@ -24,13 +24,27 @@ const limiter = rateLimit({
 
 // Middleware
 app.use(limiter);
+
+// CORS configuration
+const allowedOrigins =
+  process.env.NODE_ENV === "production"
+    ? [
+        process.env.CLIENT_URL,
+        "https://codepets.vercel.app",
+        "https://code-pets.vercel.app", // Your actual Vercel domain
+        "https://codepets-git-main.vercel.app", // Git branch deployments
+        "https://code-pets-git-main.vercel.app", // Git branch deployments
+      ].filter(Boolean) // Remove any undefined values
+    : [process.env.CLIENT_URL || "http://localhost:5173"];
+
+console.log("🌐 CORS allowed origins:", allowedOrigins);
+
 app.use(
   cors({
-    origin:
-      process.env.NODE_ENV === "production"
-        ? [process.env.CLIENT_URL, "https://codepets.vercel.app"]
-        : process.env.CLIENT_URL || "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json({ limit: "10mb" }));
@@ -49,6 +63,27 @@ app.get("/api/health", (req, res) => {
     status: "ok",
     message: "CodePets API is running",
     timestamp: new Date().toISOString(),
+  });
+});
+
+// CORS debug endpoint
+app.get("/api/cors-test", (req, res) => {
+  res.json({
+    success: true,
+    message: "CORS is working",
+    origin: req.headers.origin,
+    allowedOrigins:
+      process.env.NODE_ENV === "production"
+        ? [
+            process.env.CLIENT_URL,
+            "https://codepets.vercel.app",
+            "https://code-pets.vercel.app",
+            "https://codepets-git-main.vercel.app",
+            "https://code-pets-git-main.vercel.app",
+          ].filter(Boolean)
+        : [process.env.CLIENT_URL || "http://localhost:5173"],
+    environment: process.env.NODE_ENV,
+    clientUrl: process.env.CLIENT_URL,
   });
 });
 

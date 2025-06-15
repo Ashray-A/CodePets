@@ -11,3 +11,10 @@ services:
         value: production
       - key: PORT
         value: 10000
+      - key: CLIENT_URL
+        value: https://code-pets.vercel.app
+      # Add other environment variables through Render dashboard:
+      # MONGODB_URI - Your MongoDB Atlas connection string
+      # GITHUB_CLIENT_ID - Your GitHub OAuth App Client ID
+      # GITHUB_CLIENT_SECRET - Your GitHub OAuth App Client Secret
+      # JWT_SECRET - A secure random string for JWT signing
