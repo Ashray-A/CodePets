@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
     },
     lastSynced: {
       type: Date,
-      default: Date.now,
+      // No default - null for new users who haven't synced yet
     },
   },
   {

@@ -18,11 +18,7 @@ const commitSyncSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
-    date: {
-      type: Date,
-      default: Date.now,
-      index: true,
-    },
+    // No separate date field - using timestamps (createdAt, updatedAt)
   },
   {
     timestamps: true,

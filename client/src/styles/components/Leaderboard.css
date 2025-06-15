@@ -1,7 +1,6 @@
 /* Leaderboard Component Styles */
-
 .leaderboard-content {
-  width: 100%;
+  padding: 1rem;
 }
 
 .leaderboard-header {
@@ -10,14 +9,13 @@
 }
 
 .leaderboard-header h2 {
-  color: var(--primary-color);
-  margin-bottom: 0.5rem;
-  font-size: 2rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
 }
 
 .leaderboard-header p {
+  margin: 0;
   color: var(--text-secondary);
-  font-size: 1rem;
 }
 
 .leaderboard-table {
@@ -31,7 +29,6 @@
 .leaderboard-table table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
 }
 
 .leaderboard-table th {
@@ -41,7 +38,6 @@
   font-weight: 600;
   color: var(--text-primary);
   border-bottom: 2px solid var(--border-color);
-  font-size: 0.85rem;
 }
 
 .leaderboard-table th:first-child {
@@ -55,14 +51,26 @@
 }
 
 .leaderboard-table td {
-  padding: 0.75rem;
+  padding: 1rem;
   border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
 }
 
 .leaderboard-table tr:last-child td {
   border-bottom: none;
+}
+
+.leaderboard-table tr.rank-1 {
+  background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
+}
+
+.leaderboard-table tr.rank-2 {
+  background: linear-gradient(90deg, rgba(192, 192, 192, 0.1), transparent);
+}
+
+.leaderboard-table tr.rank-3 {
+  background: linear-gradient(90deg, rgba(205, 127, 50, 0.1), transparent);
 }
 
 .leaderboard-table tbody tr:hover {
@@ -70,32 +78,18 @@
   cursor: pointer;
 }
 
-/* Rank Styling */
-.leaderboard-table tr.rank-1 {
-  background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent);
-}
-
 .leaderboard-table tr.rank-1:hover {
   background: linear-gradient(90deg, rgba(255, 215, 0, 0.2), var(--bg-secondary));
-}
-
-.leaderboard-table tr.rank-2 {
-  background: linear-gradient(90deg, rgba(192, 192, 192, 0.1), transparent);
 }
 
 .leaderboard-table tr.rank-2:hover {
   background: linear-gradient(90deg, rgba(192, 192, 192, 0.2), var(--bg-secondary));
 }
 
-.leaderboard-table tr.rank-3 {
-  background: linear-gradient(90deg, rgba(205, 127, 50, 0.1), transparent);
-}
-
 .leaderboard-table tr.rank-3:hover {
   background: linear-gradient(90deg, rgba(205, 127, 50, 0.2), var(--bg-secondary));
 }
 
-/* Cell Specific Styles */
 .rank-cell {
   text-align: center;
   font-weight: bold;
@@ -104,7 +98,7 @@
 }
 
 .rank-number {
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   display: inline-block;
   line-height: 1;
 }
@@ -123,12 +117,6 @@
   border: 2px solid var(--border-color);
 }
 
-.username {
-  font-weight: 500;
-  color: var(--text-primary);
-  font-size: 0.85rem;
-}
-
 .pet-cell {
   text-align: left;
   min-width: 150px;
@@ -144,21 +132,33 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  margin-bottom: 0.2rem;
 }
 
 .pet-emoji {
-  font-size: 1.1em;
+  font-size: 2rem !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0.3rem !important;
+  margin: 0 0.5rem 0 0 !important;
+  background: rgba(248, 250, 252, 0.6) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 3px rgba(124,58,237,0.08) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle;
 }
 
 .pet-name {
-  font-weight: 500;
-  color: var(--text-primary);
-  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
 }
 
 .pet-level {
-  color: var(--text-secondary);
-  font-size: 0.7rem;
+  color: #6b7280;
+  font-size: 0.85rem;
 }
 
 .points-cell {
@@ -174,7 +174,6 @@
   min-width: 70px;
 }
 
-/* Loading and Error States */
 .leaderboard-loading, .leaderboard-error {
   text-align: center;
   padding: 2rem;
@@ -185,16 +184,23 @@
   color: var(--error-color);
 }
 
-/* Mobile Responsive */
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Mobile responsive styles */
 @media (max-width: 768px) {
   .leaderboard-table {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
   }
   
   .leaderboard-table th,
   .leaderboard-table td {
     padding: 0.5rem 0.25rem;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
   }
   
   .user-avatar-small {
@@ -203,22 +209,22 @@
   }
   
   .pet-emoji {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
   
   .rank-number {
-    font-size: 1rem;
+    font-size: 1.1rem;
   }
   
   .username {
-    font-size: 0.75rem;
+    font-size: 0.9rem;
   }
   
   .pet-name {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
   }
   
   .pet-level {
-    display: none;
+    display: none; /* Hide level details on mobile to save space */
   }
 }

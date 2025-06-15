@@ -4,7 +4,7 @@ import PetDisplay from '../components/PetDisplay.jsx';
 import History from '../components/History.jsx';
 import Leaderboard from '../components/Leaderboard.jsx';
 import { githubAPI, petAPI } from '../utils/api';
-import '../styles/DashboardPage.css';
+import '../styles/pages/DashboardPage.css';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
@@ -68,14 +68,13 @@ const DashboardPage = () => {
       // Refresh pet display
       window.location.reload();
     } catch (err) {
-      console.error('Time log error:', err);
-      setMessage({
+      console.error('Time log error:', err);      setMessage({
         type: 'error',
         text: 'Failed to log time. Please try again.'
-      });    } finally {
+      });
+    } finally {
       setLoggingTime(false);
-    }
-  };
+    }  };
 
   return (
     <div className="dashboard-page">
@@ -84,7 +83,10 @@ const DashboardPage = () => {
         <div className="user-info">
           <img src={user.avatarUrl} alt={user.username} className="user-avatar" />
           <span className="username">{user.username}</span>
-          <button onClick={logout} className="logout-btn">Logout</button>
+          <button onClick={logout} className="logout-btn">
+            <span>🚪</span>
+            Logout
+          </button>
         </div>
       </header>      <main className="dashboard-content">        <div className="dashboard-tabs">
           <button 
@@ -118,12 +120,9 @@ const DashboardPage = () => {
                 <div className={`message ${message.type}`}>
                   {message.text}
                 </div>
-              )}
-
-              <div className="action-card">
+              )}              <div className="action-card">
                 <h4>🔄 Sync GitHub Commits</h4>
-                <p>Fetch your latest commits and earn points for your pet!</p>
-                <button 
+                <p>Fetch your latest commits and earn points for your pet!</p>                <button 
                   onClick={handleSyncCommits} 
                   disabled={syncing}
                   className="action-btn"

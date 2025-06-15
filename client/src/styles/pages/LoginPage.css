@@ -1,0 +1,514 @@
+/* Enhanced Login Page Styles */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.login-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.3;
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+.login-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Header Section */
+.header-section {
+  margin-bottom: 2.5rem;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.logo-icon {
+  font-size: 3rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+.login-container h1 {
+  color: #4f46e5;
+  margin: 0;
+  font-size: 3rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tagline {
+  color: #6b7280;
+  font-size: 1.2rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Pet Preview */
+.pet-preview {
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.pet-animation {
+  position: relative;
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+
+.preview-emoji {
+  font-size: 5rem;
+  display: block;
+  animation: petFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.1));
+}
+
+@keyframes petFloat {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50% { transform: translateY(-15px) scale(1.05); }
+}
+
+.pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  border: 3px solid #4f46e5;
+  border-radius: 50%;
+  opacity: 0.3;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0.3; }
+  50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.1; }
+  100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+}
+
+.preview-text {
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Error Message */
+.error-message {
+  background: linear-gradient(135deg, #fef2f2, #fee2e2);
+  border: 1px solid #fca5a5;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  text-align: left;
+}
+
+.error-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.error-content {
+  flex: 1;
+}
+
+.error-title {
+  color: #dc2626;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.error-tips {
+  color: #7f1d1d;
+  font-size: 0.9rem;
+}
+
+.error-tips ul {
+  margin: 0.5rem 0 0 0;
+  padding-left: 1rem;
+}
+
+.error-tips li {
+  margin-bottom: 0.25rem;
+}
+
+/* GitHub Login Button */
+.github-login-btn {
+  background: linear-gradient(135deg, #24292f, #57606a);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  padding: 1.25rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 8px 25px rgba(36, 41, 47, 0.2);
+}
+
+.github-login-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(36, 41, 47, 0.3);
+  background: linear-gradient(135deg, #32383f, #656d76);
+}
+
+.github-login-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.github-login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.github-icon {
+  font-size: 1.3rem;
+}
+
+.btn-arrow {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.github-login-btn:hover:not(:disabled) .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* Enhanced GitHub Login Button */
+.enhanced-github-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  background: linear-gradient(135deg, #24292f 60%, #57606a 100%);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(36, 41, 47, 0.18);
+  transition: box-shadow 0.2s, transform 0.2s;
+  padding: 1.1rem 2.2rem;
+}
+
+.enhanced-github-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #32383f 60%, #656d76 100%);
+  box-shadow: 0 12px 35px rgba(36, 41, 47, 0.28);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.github-icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(36,41,47,0.08);
+  margin-right: 0.7rem;
+}
+
+.github-btn-text {
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.01em;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Features Section */
+.features {
+  background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+  border-radius: 20px;
+  padding: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+.features h3 {
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.features-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  min-height: 3rem;
+}
+
+.feature-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.feature-icon {
+  font-size: 1.4rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+}
+
+.feature-item span:last-child {
+  color: #475569;
+  font-weight: 500;
+  line-height: 1.4;
+  flex: 1;
+  text-align: left;
+}
+
+/* Pet Card Improvements */
+.pet-card {
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 6px 32px rgba(80, 80, 120, 0.10), 0 1.5px 4px rgba(80,80,120,0.04);
+  padding: 2.5rem 2.5rem 2rem 2.5rem;
+  max-width: 420px;
+  margin: 2.5rem auto;
+  text-align: center;
+  position: relative;
+  border: 1.5px solid #f3f4f6;
+}
+
+.pet-emoji {
+  font-size: 3.5rem;
+  background: linear-gradient(135deg, #f8fafc 60%, #f3e8ff 100%);
+  border-radius: 50%;
+  box-shadow: 0 2px 12px rgba(124,58,237,0.08);
+  padding: 0.7rem 0.9rem;
+  margin-bottom: 1.1rem;
+  display: inline-block;
+}
+
+.pet-card h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0.2rem 0 0.5rem 0;
+  color: #232946;
+}
+
+.pet-card .pet-level {
+  color: #7c3aed;
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.pet-card .pet-points {
+  color: #6b7280;
+  font-size: 1.08rem;
+  margin-bottom: 0.7rem;
+}
+
+.pet-card .pet-last-active {
+  color: #a1a1aa;
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.pet-card .pet-progress-label {
+  font-size: 1.08rem;
+  color: #4f46e5;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.pet-card .pet-progress-bar-bg {
+  background: #f3f4f6;
+  border-radius: 1.2rem;
+  height: 1.1rem;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.pet-card .pet-progress-bar {
+  background: linear-gradient(90deg, #667eea 0%, #a78bfa 100%);
+  height: 100%;
+  border-radius: 1.2rem;
+  transition: width 0.4s cubic-bezier(.4,0,.2,1);
+}
+
+.pet-card .pet-stats {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.pet-card .pet-stat-box {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 1.1rem 2.2rem;
+  min-width: 110px;
+  box-shadow: 0 1px 4px rgba(80,80,120,0.04);
+}
+
+.pet-card .pet-stat-label {
+  color: #a1a1aa;
+  font-size: 1.02rem;
+  margin-bottom: 0.3rem;
+}
+
+.pet-card .pet-stat-value {
+  color: #232946;
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .login-page {
+    padding: 1rem;
+  }
+  
+  .login-container {
+    padding: 2rem;
+    border-radius: 20px;
+  }
+  
+  .login-container h1 {
+    font-size: 2.5rem;
+  }
+  
+  .logo-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .preview-emoji {
+    font-size: 4rem;
+  }
+  
+  .pulse-ring {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .github-login-btn {
+    padding: 1rem 1.5rem;
+  }
+  
+  .enhanced-github-btn {
+    padding: 1rem 1.5rem;
+  }
+  
+  .pet-card {
+    padding: 2rem;
+  }
+  
+  .pet-emoji {
+    font-size: 3rem;
+  }
+  
+  .pet-card h2 {
+    font-size: 1.2rem;
+  }
+  
+  .pet-card .pet-level,
+  .pet-card .pet-points,
+  .pet-card .pet-last-active {
+    font-size: 0.9rem;
+  }
+  
+  .pet-card .pet-progress-label {
+    font-size: 0.9rem;
+  }
+  
+  .pet-card .pet-stat-label {
+    font-size: 0.9rem;
+  }
+  
+  .pet-card .pet-stat-value {
+    font-size: 1.2rem;
+  }
+}

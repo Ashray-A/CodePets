@@ -1,0 +1,249 @@
+/* Pet Display Component Styles */
+.pet-display {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 6px 30px rgba(80, 80, 120, 0.08);
+  padding: 2rem;
+  max-width: 400px;
+  margin: 0 auto;
+  text-align: center;
+  border: 1px solid #f3f4f6;
+}
+
+.pet-avatar {
+  margin-bottom: 2rem;
+}
+
+.pet-display .pet-emoji {
+  font-size: 6rem !important;
+  line-height: 1;
+  display: block;
+  text-align: center;
+  margin: 0 auto;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f8fafc 60%, #f3e8ff 100%);
+  border-radius: 50%;
+  box-shadow: 0 4px 20px rgba(124,58,237,0.15);
+  width: 8rem;
+  height: 8rem;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  animation: petBounce 2s ease-in-out infinite;
+}
+
+@keyframes petBounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-8px); }
+  60% { transform: translateY(-4px); }
+}
+
+.pet-display .pet-avatar {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.pet-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+  color: #1f2937;
+}
+
+.pet-level {
+  color: #7c3aed;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0.3rem 0;
+}
+
+.pet-points {
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin: 0.3rem 0;
+}
+
+.pet-last-active {
+  color: #9ca3af;
+  font-size: 1rem;
+  margin: 0.3rem 0 1.5rem 0;
+}
+
+.progress-section {
+  margin: 1.5rem 0;
+}
+
+.progress-text {
+  color: #4f46e5;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+.progress-bar {
+  background: #f3f4f6;
+  border-radius: 10px;
+  height: 10px;
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, #667eea 0%, #a78bfa 100%);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.max-level {
+  color: #10b981;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 1rem 0;
+}
+
+.pet-stats {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.stat {
+  text-align: center;
+  background: #f8fafc;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  min-width: 100px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.stat-label {
+  display: block;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  margin-bottom: 0.3rem;
+}
+
+.stat-value {
+  display: block;
+  color: #1f2937;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.pet-loading, .pet-error {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  font-size: 1.1rem;
+}
+
+.pet-error {
+  color: var(--error-color);
+}
+
+.pet-card {
+  background: #fff;
+  border-radius: 22px;
+  box-shadow: 0 6px 32px rgba(80, 80, 120, 0.10), 0 1.5px 4px rgba(80,80,120,0.04);
+  padding: 2.5rem 2.5rem 2rem 2.5rem;
+  max-width: 420px;
+  margin: 2.5rem auto;
+  text-align: center;
+  position: relative;
+  border: 1.5px solid #f3f4f6;
+}
+
+.pet-card h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0.2rem 0 0.5rem 0;
+  color: #232946;
+}
+
+.pet-card .pet-level {
+  color: #7c3aed;
+  font-size: 1.08rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.pet-card .pet-points {
+  color: #6b7280;
+  font-size: 1.08rem;
+  margin-bottom: 0.7rem;
+}
+
+.pet-card .pet-last-active {
+  color: #a1a1aa;
+  font-size: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.pet-card .pet-progress-label {
+  font-size: 1.08rem;
+  color: #4f46e5;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.pet-card .pet-progress-bar-bg {
+  background: #f3f4f6;
+  border-radius: 1.2rem;
+  height: 1.1rem;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.pet-card .pet-progress-bar {
+  background: linear-gradient(90deg, #667eea 0%, #a78bfa 100%);
+  height: 100%;
+  border-radius: 1.2rem;
+  transition: width 0.4s cubic-bezier(.4,0,.2,1);
+}
+
+.pet-card .pet-stats {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.pet-card .pet-stat-box {
+  background: #f8fafc;
+  border-radius: 14px;
+  padding: 1.1rem 2.2rem;
+  min-width: 110px;
+  box-shadow: 0 1px 4px rgba(80,80,120,0.04);
+}
+
+.pet-card .pet-stat-label {
+  color: #a1a1aa;
+  font-size: 1.02rem;
+  margin-bottom: 0.3rem;
+}
+
+.pet-card .pet-stat-value {
+  color: #232946;
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  .pet-emoji {
+    font-size: 4rem;
+  }
+  
+  .pet-stats {
+    grid-template-columns: 1fr;
+  }
+}

@@ -103,9 +103,7 @@ router.get("/history", authenticateToken, async (req, res) => {
     const timeLogs = await TimeLog.find({ userId: req.user._id })
       .sort({ date: -1 })
       .limit(10)
-      .lean();
-
-    // Calculate weekly stats
+      .lean(); // Calculate weekly stats
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
 
@@ -115,11 +113,25 @@ router.get("/history", authenticateToken, async (req, res) => {
     }).lean();
     const thisWeekHours = thisWeekLogs.reduce((sum, log) => sum + log.hours, 0);
 
-    // Get recent commit sync history (last 10)
+    // Calculate weekly commits from CommitSync data
+    const thisWeekCommitSyncs = await CommitSync.find({
+      userId: req.user._id,
+      createdAt: { $gte: weekAgo },
+    }).lean();
+    const thisWeekCommits = thisWeekCommitSyncs.reduce(
+      (sum, sync) => sum + sync.newCommits,
+      0
+    ); // Get recent commit sync history (last 10)
     const commitHistory = await CommitSync.find({ userId: req.user._id })
-      .sort({ date: -1 })
+      .sort({ createdAt: -1 })
       .limit(10)
       .lean();
+
+    // Transform commit history to match frontend expectations
+    const transformedCommitHistory = commitHistory.map((sync) => ({
+      ...sync,
+      date: sync.createdAt, // Map createdAt to date for frontend compatibility
+    }));
 
     const historyData = {
       stats: {
@@ -133,11 +145,11 @@ router.get("/history", authenticateToken, async (req, res) => {
         lastActivity: pet.lastActivity,
         thisWeek: {
           hours: Math.round(thisWeekHours * 10) / 10,
-          commits: 0, // We don't track weekly commits separately
+          commits: thisWeekCommits,
         },
       },
       timeLogs: timeLogs,
-      commitHistory: commitHistory,
+      commitHistory: transformedCommitHistory,
     };
 
     res.json({

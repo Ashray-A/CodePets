@@ -1,7 +1,12 @@
-/* Import all component styles */
+/* Component Styles Imports */
 @import './styles/globals.css';
+@import './styles/pages/LoginPage.css';
+@import './styles/pages/DashboardPage.css';
+@import './styles/components/PetDisplay.css';
+@import './styles/components/Leaderboard.css';
+@import './styles/components/History.css';
 
-/* App-specific styles only */
+/* App-specific styles */
 .App {
   min-height: 100vh;
 }
