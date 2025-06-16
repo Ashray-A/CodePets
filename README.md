@@ -4,7 +4,7 @@
 
 CodePets is a unique gamified web application that transforms your coding activities into digital pet care! Watch your virtual cat grow stronger and happier as you code, commit, and maintain your development streaks.
 
-**🚀 Live Demo:** [https://code-pets.vercel.app](https://code-pets.vercel.app)
+**🚀 Live Demo:** [CodePets](https://code-pets.vercel.app)
 
 ## ✨ Features
 
