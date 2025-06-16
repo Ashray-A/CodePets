@@ -214,13 +214,6 @@ We welcome contributions! Please follow these steps:
 - Inspired by the classic Tamagotchi digital pets
 - Built with love for the developer community
 
-## 📞 Contact
-
-**Developer**: [Your Name]
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
-- Email: your.email@example.com
-
 ## 🐛 Known Issues
 
 - Rate limiting may occur with excessive GitHub API calls
