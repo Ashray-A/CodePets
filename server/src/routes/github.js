@@ -98,8 +98,10 @@ router.post("/sync-commits", authenticateTokenWithGitHub, async (req, res) => {
       // Existing user - sync since last sync
       since = user.lastSynced.toISOString();
     } else {
-      // New user - start from NOW (no retroactive commits)
-      since = new Date().toISOString();
+      // New user - get commits from last 30 days to give initial points
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      since = thirtyDaysAgo.toISOString();
       isNewUser = true;
     }
 
@@ -108,14 +110,13 @@ router.post("/sync-commits", authenticateTokenWithGitHub, async (req, res) => {
     console.log(
       `🆕 ${isNewUser ? "New user - starting fresh" : "Existing user"}`
     );
-    console.log(`📦 Found ${reposResponse.data.length} repositories`);
-
-    // Get commits from each repository
+    console.log(`📦 Found ${reposResponse.data.length} repositories`); // Get commits from each repository
     for (const repo of reposResponse.data) {
       try {
         console.log(`🔄 Checking repo: ${repo.full_name}`);
 
-        const commitsResponse = await axios.get(
+        // First try with author parameter
+        let commitsResponse = await axios.get(
           `https://api.github.com/repos/${repo.full_name}/commits`,
           {
             headers: {
@@ -130,10 +131,61 @@ router.post("/sync-commits", authenticateTokenWithGitHub, async (req, res) => {
           }
         );
 
-        console.log(
-          `📊 Found ${commitsResponse.data.length} new commits in ${repo.full_name}`
-        );
-        totalNewCommits += commitsResponse.data.length;
+        let repoCommits = commitsResponse.data.length;
+
+        // If no commits found with author filter, try without filter and manually check
+        if (repoCommits === 0) {
+          console.log(
+            `� No commits found with author filter, checking manually...`
+          );
+
+          commitsResponse = await axios.get(
+            `https://api.github.com/repos/${repo.full_name}/commits`,
+            {
+              headers: {
+                Authorization: `token ${user.accessToken}`,
+                Accept: "application/vnd.github.v3+json",
+              },
+              params: {
+                since: since,
+                per_page: 100,
+              },
+            }
+          );
+
+          // Manually filter commits by checking author and committer
+          const userCommits = commitsResponse.data.filter((commit) => {
+            const isAuthor = commit.author?.login === user.username;
+            const isCommitter = commit.committer?.login === user.username;
+            const isAuthorByEmail = commit.commit.author.email === user.email;
+            const isCommitterByEmail =
+              commit.commit.committer.email === user.email;
+
+            return (
+              isAuthor || isCommitter || isAuthorByEmail || isCommitterByEmail
+            );
+          });
+
+          repoCommits = userCommits.length;
+
+          if (repoCommits > 0) {
+            console.log(
+              `🎯 Found ${repoCommits} commits after manual filtering`
+            );
+            console.log(
+              `📝 Sample commit authors:`,
+              userCommits.slice(0, 3).map((c) => ({
+                author: c.author?.login,
+                committer: c.committer?.login,
+                authorEmail: c.commit.author.email,
+                committerEmail: c.commit.committer.email,
+              }))
+            );
+          }
+        }
+
+        console.log(`📊 Found ${repoCommits} new commits in ${repo.full_name}`);
+        totalNewCommits += repoCommits;
       } catch (repoError) {
         // Skip repos that we can't access (403/404)
         if (
